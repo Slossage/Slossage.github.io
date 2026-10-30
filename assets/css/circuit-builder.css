@@ -24,10 +24,10 @@
   min-width: var(--tap);
   min-height: var(--tap);
   padding: 4px 14px;
-  border: 1px solid var(--border);
+  border: var(--edge-w) solid var(--edge);
   border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: 0 2px 0 var(--lift);
+  box-shadow: var(--pop-sm);
   color: var(--text);
   font: inherit;
   font-weight: 700;
@@ -35,7 +35,7 @@
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
-.cb-chip:active { transform: translateY(2px); box-shadow: none; }
+.cb-chip:active { transform: translate(3px, 3px); box-shadow: none; }
 .cb-chip[aria-current] { border-color: var(--level-colour); box-shadow: 0 0 0 3px var(--level-colour); }
 /* Done: filled, and says so in words */
 .cb-chip.is-done { background: var(--good-bg); border-color: var(--good); color: var(--good); }
@@ -52,9 +52,9 @@
 .cb-workspace {
   padding: 12px;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--edge-w) solid var(--edge);
   border-radius: var(--radius);
-  box-shadow: 0 3px 0 var(--lift);
+  box-shadow: var(--pop);
 }
 
 .cb-palette {
@@ -74,10 +74,10 @@
   width: 100%;
   min-height: 72px;
   padding: 6px 4px;
-  border: 1px solid var(--border);
+  border: var(--edge-w) solid var(--edge);
   border-radius: var(--radius);
   background: var(--bg);
-  box-shadow: 0 2px 0 var(--lift);
+  box-shadow: var(--pop-sm);
   color: var(--text);
   font: inherit;
   font-size: 0.85rem;
@@ -91,7 +91,7 @@
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
 }
-.cb-palette button:active { transform: translateY(2px); box-shadow: none; }
+.cb-palette button:active { transform: translate(3px, 3px); box-shadow: none; }
 .cb-palette svg { width: 54px; height: 36px; overflow: visible; }
 .cb-palette .cb-letter { font-size: 16px; }
 
@@ -180,7 +180,7 @@
   display: flex;
   gap: 6px;
   padding: 6px;
-  border: 1px solid var(--border);
+  border: var(--edge-w) solid var(--edge);
   border-radius: 12px;
   background: var(--surface);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);

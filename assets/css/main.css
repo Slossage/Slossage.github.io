@@ -1,27 +1,33 @@
 /* Shared styles for every page. No external fonts or CDNs (school web filters). */
 
 :root {
-  /* Warm "jotter paper" background with white cards on top */
-  --bg: #f5f3ed;
+  /* "Bold and chunky": cream background, white cards with thick dark outlines
+     and a solid offset shadow, so everything looks like a button you can press */
+  --bg: #fff8e7;
   --surface: #ffffff;
-  --text: #17203a;
-  --muted: #4c536b;
-  --border: #d9d4c7;
-  --lift: #cfc9ba;            /* the solid edge under cards and buttons */
-  --grid: rgba(23, 32, 58, 0.06);
-  --accent: #1f4fd1;
+  --text: #1d1442;
+  --muted: #554a7a;
+  --border: #d8cfe8;          /* thin inner lines: tables, empty drop slots */
+  --edge: #1d1442;            /* thick outline on cards and buttons */
+  --edge-w: 3px;
+  --pop-colour: #1d1442;      /* the offset shadow behind cards and buttons */
+  --pop: 4px 4px 0 var(--pop-colour);
+  --pop-sm: 3px 3px 0 var(--pop-colour);
+  --lift: var(--pop-colour);
+  --grid: rgba(29, 20, 66, 0.06);
+  --accent: #5b2bd6;
   --accent-text: #ffffff;
-  --radius: 10px;
+  --radius: 16px;
   --tap: 44px;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   /* Avenir Next ships with every iPad; other devices fall back to their system font */
   --font-head: "Avenir Next", Avenir, "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
 
-  /* Header bar: dark ink in both themes */
-  --ink: #16233f;
-  --ink-2: #22335a;
+  /* Header bar: purple in both themes */
+  --ink: #5b2bd6;
+  --ink-2: #4520b0;
   --ink-text: #ffffff;
-  --ink-muted: #b9c3dc;
+  --ink-muted: #ddd3ff;
 
   /* Feedback: blue-green vs amber stays distinct for red/green colour blindness,
      and always comes with words, so colour is never the only cue */
@@ -48,17 +54,18 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #10131d;
-    --surface: #1a1e2c;
-    --text: #eef0f7;
-    --muted: #aab1cc;
-    --border: #2e3448;
-    --lift: #0a0c13;
-    --grid: rgba(238, 240, 247, 0.05);
-    --accent: #8fb0ff;
-    --accent-text: #10131d;
-    --ink: #0b0e17;
-    --ink-2: #1c2235;
+    --bg: #14102a;
+    --surface: #211b3f;
+    --text: #f3efff;
+    --muted: #b7aee0;
+    --border: #3a3266;
+    --edge: #7d6ee0;
+    --pop-colour: #05030d;
+    --grid: rgba(243, 239, 255, 0.05);
+    --accent: #b8a6ff;
+    --accent-text: #14102a;
+    --ink: #3a22a0;
+    --ink-2: #2a1878;
     --good: #2dd4bf;
     --good-bg: #10302d;
     --bad: #fbbf24;
@@ -86,6 +93,7 @@ body {
 }
 
 h1, h2, h3 { font-family: var(--font-head); font-weight: 700; }
+h1 { font-weight: 800; }
 
 a { color: var(--accent); }
 
@@ -106,7 +114,7 @@ a { color: var(--accent); }
 .site-header {
   background: var(--ink);
   color: var(--ink-text);
-  border-bottom: 1px solid var(--ink-2);
+  border-bottom: var(--edge-w) solid var(--pop-colour);
 }
 .site-header .wrap {
   display: flex;
@@ -146,9 +154,10 @@ a { color: var(--accent); }
   min-width: 64px;
   min-height: 48px;
   padding: 6px 16px;
+  border: var(--edge-w) solid var(--pop-colour);
   border-radius: var(--radius);
   background: var(--ink-2);
-  box-shadow: inset 0 -4px 0 var(--level-bright);
+  box-shadow: inset 0 -5px 0 var(--level-bright), var(--pop-sm);
   color: var(--ink-text);
   font-family: var(--font-head);
   font-size: 1.05rem;
@@ -159,10 +168,10 @@ a { color: var(--accent); }
 }
 .level-nav a[aria-current="page"] {
   background: var(--level-bright);
-  box-shadow: none;
-  color: var(--ink);
+  box-shadow: var(--pop-sm);
+  color: #1d1442;
 }
-.level-nav a:active { transform: translateY(2px); }
+.level-nav a:active { transform: translate(3px, 3px); box-shadow: none; }
 @media (max-width: 640px) {
   .level-nav { flex: 1 1 100%; }
   .level-nav a { min-width: 0; padding: 6px 4px; }
@@ -173,7 +182,7 @@ a { color: var(--accent); }
 .hero {
   margin: 24px 0 8px;
   padding: 32px 28px;
-  border: 1px solid var(--border);
+  border: var(--edge-w) solid var(--edge);
   border-radius: var(--radius);
   background-color: var(--surface);
   background-image:
@@ -200,8 +209,8 @@ a { color: var(--accent); }
 .level,
 .unit,
 .starter-link {
-  border: 1px solid var(--border);
-  box-shadow: 0 3px 0 var(--lift);
+  border: var(--edge-w) solid var(--edge);
+  box-shadow: var(--pop);
 }
 
 /* Level cards (home page) */
@@ -226,7 +235,7 @@ a { color: var(--accent); }
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
 }
-a.level:active { transform: translateY(3px); box-shadow: 0 0 0 var(--lift); }
+a.level:active { transform: translate(4px, 4px); box-shadow: none; }
 .level-badge {
   display: flex;
   align-items: center;
@@ -270,15 +279,15 @@ a.level:active { transform: translateY(3px); box-shadow: 0 0 0 var(--lift); }
   align-items: center;
   min-height: var(--tap);
   padding: 6px 14px;
-  border: 1px solid var(--border);
+  border: var(--edge-w) solid var(--edge);
   border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: 0 2px 0 var(--lift);
+  box-shadow: var(--pop-sm);
   color: var(--text);
   font-weight: 600;
   text-decoration: none;
 }
-.crumbs a:active { transform: translateY(2px); box-shadow: none; }
+.crumbs a:active { transform: translate(3px, 3px); box-shadow: none; }
 
 /* Level page: one section per unit */
 .unit {
@@ -329,7 +338,7 @@ a.level:active { transform: translateY(3px); box-shadow: 0 0 0 var(--lift); }
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
 }
-.starter-link:active { transform: translateY(3px); box-shadow: 0 0 0 var(--lift); }
+.starter-link:active { transform: translate(4px, 4px); box-shadow: none; }
 .starter-link strong { font-family: var(--font-head); font-size: 1.2rem; }
 .starter-link span { color: var(--muted); font-size: 0.95rem; }
 
