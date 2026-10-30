@@ -1,0 +1,208 @@
+/* Circuit builder (assets/js/circuit-builder.js). Load after main.css and starter.css. */
+
+:root {
+  --cb-glow: #facc15;          /* lamp light */
+  --cb-led: #f472b6;           /* LED light */
+  --cb-flow: #1f4fd1;          /* moving current dots */
+}
+@media (prefers-color-scheme: dark) {
+  :root { --cb-flow: #8fb0ff; }
+}
+
+.cb { margin-top: 20px; }
+
+/* Task strip: numbered chips, then the current task card */
+.cb-task-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.cb-task-nav-label { color: var(--muted); font-weight: 600; margin-right: 4px; }
+.cb-chip {
+  min-width: var(--tap);
+  min-height: var(--tap);
+  padding: 4px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 2px 0 var(--lift);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.cb-chip:active { transform: translateY(2px); box-shadow: none; }
+.cb-chip[aria-current] { border-color: var(--level-colour); box-shadow: 0 0 0 3px var(--level-colour); }
+/* Done: filled, and says so in words */
+.cb-chip.is-done { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+.cb-chip.is-done::after { content: " done"; font-weight: 600; font-size: 0.85rem; }
+.cb-example { display: none; }
+.show-answers .cb-example { display: inline-flex; margin-left: auto; }
+
+.cb-task { margin-bottom: 12px; }
+.cb-task[hidden] { display: none; }
+.cb-task .q-prompt { margin-bottom: 0; }
+.cb-task .cb-next { margin-left: 8px; vertical-align: middle; }
+
+/* Builder card: palette, status bar, then the grid */
+.cb-workspace {
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 3px 0 var(--lift);
+}
+
+.cb-palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(74px, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cb-palette button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  min-height: 72px;
+  padding: 6px 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  box-shadow: 0 2px 0 var(--lift);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.15;
+  cursor: grab;
+  /* Dragging out of the palette must not scroll the page */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.cb-palette button:active { transform: translateY(2px); box-shadow: none; }
+.cb-palette svg { width: 54px; height: 36px; overflow: visible; }
+.cb-palette .cb-letter { font-size: 16px; }
+
+.cb-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+.cb-status {
+  flex: 1 1 260px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+.cb-bar .tool { padding: 6px 14px; }
+.cb-warning {
+  flex: 1 1 100%;
+  margin: 0;
+  padding: 10px 14px;
+  border-left: 5px solid var(--bad);
+  border-radius: 10px;
+  background: var(--bad-bg);
+  font-size: 1rem;
+}
+.cb-warning[hidden] { display: none; }
+
+/* The grid. touch-action: none so a finger on the grid draws instead of scrolling;
+   it is never taller than the screen, so there is always somewhere to scroll from. */
+.cb-stage { position: relative; }
+.cb-board {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 140px);
+  min-height: 260px;
+  color: var(--text);
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.cb-paper { fill: var(--bg); }
+.cb-griddot { fill: var(--muted); opacity: 0.45; }
+
+.cb-wire { stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; }
+.cb-wire.is-selected { stroke: var(--accent); stroke-width: 7; }
+.cb-wire.is-bad { stroke: var(--bad); stroke-dasharray: 6 8; }
+.cb-flow {
+  stroke: var(--cb-flow);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 0 40;
+}
+.cb-spin {
+  fill: none;
+  stroke: var(--cb-flow);
+  stroke-width: 3;
+  stroke-dasharray: 6 8.45;
+}
+.cb-junction { fill: currentColor; }
+.cb-end { fill: var(--bg); stroke: var(--accent); stroke-width: 2.5; }
+.cb-pending { fill: none; stroke: var(--accent); stroke-width: 4; }
+@media (prefers-reduced-motion: no-preference) {
+  .cb-pending { animation: cb-pulse 1s ease-in-out infinite alternate; }
+  @keyframes cb-pulse { to { stroke-width: 9; } }
+}
+
+.cb-comp use { color: currentColor; }
+.cb-letter { fill: currentColor; font-size: 21px; font-weight: 700; font-family: var(--font); }
+.cb-lit { fill: var(--cb-glow); }
+.cb-lit-led { fill: var(--cb-led); }
+.cb-comp.is-bad { color: var(--bad); opacity: 0.75; }
+.cb-sel { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 7 5; }
+.cb-short { fill: var(--bad-bg); stroke: var(--bad); stroke-width: 3; }
+
+.cb-reading rect { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
+.cb-reading text { fill: var(--text); font-size: 19px; font-weight: 700; font-family: var(--font); }
+.cb-value { fill: var(--muted); font-size: 17px; font-weight: 700; font-family: var(--font); }
+
+/* Pop-up next to the selected component or wire */
+.cb-pop {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+.cb-pop[hidden] { display: none; }
+.cb-pop .tool { box-shadow: none; }
+.cb-pop [hidden] { display: none; }
+
+/* The symbol that follows a finger while it is dragged in from the palette */
+.cb-ghost {
+  position: fixed;
+  left: -40px;
+  top: -27px;
+  z-index: 50;
+  width: 80px;
+  height: 54px;
+  pointer-events: none;
+  color: var(--text);
+  opacity: 0.85;
+}
+.cb-ghost[hidden] { display: none; }
+.cb-ghost svg { width: 100%; height: 100%; overflow: visible; }
+
+.cb-help { margin: 16px 0 0; color: var(--muted); font-size: 1rem; }
+.cb-help li + li { margin-top: 4px; }
