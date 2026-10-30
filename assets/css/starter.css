@@ -1,0 +1,255 @@
+/* Styles for starter pages. Load after main.css. Pairs with assets/js/starter.js. */
+
+.starter { padding-bottom: 56px; }
+
+/* Title block */
+.spec-ref {
+  margin: 20px 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--level-colour, var(--accent));
+}
+.starter[data-level="bge"]    { --level-colour: var(--bge); }
+.starter[data-level="n4"]     { --level-colour: var(--n4); }
+.starter[data-level="n5"]     { --level-colour: var(--n5); }
+.starter[data-level="higher"] { --level-colour: var(--higher); }
+.starter[data-level="ah"]     { --level-colour: var(--ah); }
+
+.starter h1 {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+}
+.lisc {
+  margin: 0;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.lisc p { margin: 0; }
+.lisc p + p { margin-top: 6px; }
+
+/* Teacher toolbar: timer, show answers, reset */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 8px;
+}
+.tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tool[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+
+.timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+}
+.timer select {
+  min-height: var(--tap);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
+}
+.timer-display {
+  min-width: 4.2ch;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.timer .tool { border: 0; padding: 8px 12px; }
+.timer.is-done { border-color: var(--bad); background: var(--bad-bg); }
+.timer.is-done .timer-display { color: var(--bad); }
+
+/* Question card. Questions are numbered only, with no difficulty labels, except the
+   last one on every starter, which is a .q-challenge for pupils who finish early. */
+.toolbar + .q { margin-top: 28px; }
+.q {
+  margin: 0 0 16px;
+  padding: 20px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.q-prompt { margin: 0 0 14px; font-size: 1.25rem; font-weight: 600; }
+.q-prompt .q-num { color: var(--muted); margin-right: 6px; }
+.q-hint { display: block; margin-top: 4px; font-size: 1rem; font-weight: 400; color: var(--muted); }
+
+.q-challenge { border: 2px solid var(--level-colour, var(--accent)); }
+.q-tag {
+  display: table;
+  margin-bottom: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--level-colour, var(--accent));
+  color: var(--surface);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Two columns by default (so four options make a 2 × 2 grid); .is-row puts three side by side */
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.options.is-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.options.is-pair { max-width: 520px; }
+@media (max-width: 600px) {
+  .options, .options.is-row { grid-template-columns: minmax(0, 1fr); }
+  .options.is-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.option,
+.match-item,
+.match-target {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 56px;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.15rem;
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.option { align-items: flex-start; text-align: left; }
+.option:has(svg) { align-items: stretch; padding: 10px; }
+.option:disabled, .match-item:disabled, .match-target:disabled { cursor: default; }
+.option:disabled:not(.is-correct):not(.is-wrong) { opacity: 0.55; }
+
+.option.is-correct,
+.match-item.is-matched,
+.match-target.is-matched {
+  border-color: var(--good);
+  background: var(--good-bg);
+}
+.option.is-wrong,
+.match-item.is-wrong,
+.match-target.is-wrong {
+  border-color: var(--bad);
+  background: var(--bad-bg);
+}
+/* Words as well as colour, so feedback never depends on colour alone */
+.option.is-correct::after { content: "Correct"; color: var(--good); }
+.option.is-wrong::after   { content: "Not this one"; color: var(--bad); }
+.option.is-correct::after,
+.option.is-wrong::after { font-size: 0.85rem; font-weight: 700; }
+
+/* Feedback line under each question */
+.q-feedback:empty { display: none; }
+.q-feedback {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border-left: 5px solid var(--border);
+  background: var(--bg);
+}
+.q-feedback.is-good { border-left-color: var(--good); background: var(--good-bg); }
+.q-feedback.is-bad  { border-left-color: var(--bad); background: var(--bad-bg); }
+.q-feedback strong { margin-right: 4px; }
+.q-explain { display: none; }
+
+/* Tap-to-match */
+.match {
+  display: grid;
+  gap: 16px;
+}
+.match-items, .match-targets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+.match-item svg { width: 96px; height: 64px; }
+.match-item.is-selected,
+.match-target.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+.match-target.is-matched { opacity: 0.6; }
+.match-item.is-matched::after { content: attr(data-label); }
+.match-item::after { font-size: 1rem; font-weight: 600; color: var(--good); }
+.match-hint { margin: 0; color: var(--muted); font-size: 1rem; }
+
+/* Circuit diagrams (symbols come from assets/js/circuit-symbols.js) */
+.circuit {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  color: var(--text);
+}
+.circuit .wire { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.circuit .dot { fill: currentColor; }
+.circuit .label { fill: currentColor; font-size: 18px; font-weight: 700; }
+.figure {
+  margin: 0 0 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+.figure .circuit { margin: 0 auto; }
+.figure-caption { margin: 6px 0 0; text-align: center; font-weight: 700; }
+.option .circuit { width: 100%; max-width: none; }
+
+/* Show answers (teacher): reveal without marking anything as attempted */
+.show-answers .option[data-correct] { border-color: var(--good); border-style: dashed; }
+.show-answers .option[data-correct]::after {
+  content: "Answer";
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--good);
+}
+.show-answers .match-item:not(.is-matched)::after { content: attr(data-label); }
+.show-answers .q:not(.is-solved) .q-explain {
+  display: block;
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border-left: 5px solid var(--good);
+  background: var(--good-bg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .is-wrong { animation: nudge 0.3s; }
+  @keyframes nudge {
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+}
