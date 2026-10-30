@@ -97,7 +97,31 @@
 }
 .q-prompt { margin: 0 0 14px; font-size: 1.25rem; font-weight: 600; }
 .q-prompt .q-num { color: var(--muted); margin-right: 6px; }
-.q-hint { display: block; margin-top: 4px; font-size: 1rem; font-weight: 400; color: var(--muted); }
+/* Optional hint for questions likely to confuse: <details class="hint"><summary>Hint</summary><p>…</p></details> */
+.hint { margin-top: 12px; }
+.hint summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 8px 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.hint summary::-webkit-details-marker { display: none; }
+.hint[open] summary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.hint p {
+  margin: 10px 0 0;
+  padding: 12px 16px;
+  border-left: 5px solid var(--accent);
+  border-radius: 10px;
+  background: var(--bg);
+}
 
 .q-challenge { border: 2px solid var(--level-colour, var(--accent)); }
 .q-tag {

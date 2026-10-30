@@ -7,6 +7,8 @@
 //                (in .match-targets) that pair up by data-key. A matched item moves into a slot
 //                above its target. Give each .match-item a data-label for Show answers.
 //   .q-feedback  empty element inside each .q where feedback is written (aria-live).
+//   .hint        optional <details class="hint"><summary>Hint</summary><p>…</p></details> inside a .q.
+//                Needs no script; Reset closes it again.
 //   [data-show-answers]  button that toggles answers for the whole page (teacher control).
 //   [data-reset]         button that clears every answer on the page.
 //   [data-timer]         countdown: a <select> of minutes, .timer-display, [data-timer-toggle].
