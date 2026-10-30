@@ -313,6 +313,55 @@ a.level:active { transform: translate(4px, 4px); box-shadow: none; }
 .unit-topics { margin: 6px 0 0; color: var(--muted); font-size: 1rem; }
 .unit .empty { margin: 14px 0 0; color: var(--muted); font-style: italic; }
 .units { padding: 16px 0 48px; }
+/* A unit with starters is a <details>: closed until its header is tapped */
+details.unit { padding: 0; }
+.unit-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.unit-summary::-webkit-details-marker { display: none; }
+.unit-summary:focus-visible { outline: 3px solid var(--level-colour, var(--accent)); outline-offset: 4px; border-radius: var(--radius); }
+details.unit:has(> .unit-summary:active) { transform: translate(4px, 4px); box-shadow: none; }
+.unit-head { flex: 1; min-width: 0; }
+.unit-head .unit-topics { display: block; }
+.unit-count {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border: 2px solid var(--level-colour, var(--accent));
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+/* Arrow drawn with two borders: points down when closed, up when open */
+.unit-summary::after {
+  content: "";
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  margin: 0 6px 6px 0;
+  border-right: 4px solid var(--text);
+  border-bottom: 4px solid var(--text);
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+details[open] > .unit-summary::after { margin-top: 6px; margin-bottom: 0; transform: rotate(-135deg); }
+details.unit > .starter-list { margin: 0; padding: 0 22px 22px; }
+@media (max-width: 540px) {
+  .unit-summary { flex-wrap: wrap; gap: 10px 16px; }
+  .unit-head { flex-basis: 100%; }
+  .unit-summary::after { margin-left: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .unit-summary::after { transition: none; }
+}
+
 /* Tools section: sits above the units, marked with the level colour */
 .unit-tools { border-left: 8px solid var(--level-colour, var(--accent)); }
 
