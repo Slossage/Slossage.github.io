@@ -38,10 +38,38 @@
     motor: letter('M'),
     ammeter: letter('A'),
     voltmeter: letter('V'),
+    'variable-resistor':
+      `<path d="M0 20H16M44 20H60M12 34L46 7.5" ${line}/><rect x="16" y="13" width="28" height="14" ${line}/>` +
+      `<path d="M48 6L44.6 13.1L40.3 7.5Z" fill="currentColor"/>`,
+    // Resistor in a circle, with light arrows coming in
+    ldr:
+      `<path d="M0 20H19M41 20H60" ${line}/><rect x="19" y="15" width="22" height="10" ${line}/>` +
+      `<circle cx="30" cy="20" r="14" ${line}/>` +
+      `<path d="M3 1L9.5 6.7M10 0L16.5 5.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>` +
+      `<path d="M11 8L6.4 7.3L9.6 3.5ZM18 7L13.4 6.3L16.6 2.5Z" fill="currentColor"/>`,
+    // Resistor with a line through it that has a short flat foot
+    thermistor: `<path d="M0 20H16M44 20H60M6 34H13L47 6" ${line}/><rect x="16" y="13" width="28" height="14" ${line}/>`,
+    diode: `<path d="M0 20H22M38 20H60M38 9V31" ${line}/><path d="M22 9V31L38 20Z" fill="currentColor"/>`,
+    // Logic gates (American shapes, as SQA uses). Inputs at (0, 12) and (0, 28), output at (60, 20);
+    // the NOT gate has its single input at (0, 20).
+    'gate-and': `<path d="M0 12H14M0 28H14M44 20H60M14 6H30A14 14 0 0 1 30 34H14Z" ${line} stroke-linejoin="round"/>`,
+    'gate-or':
+      `<path d="M0 12H15M0 28H15M46 20H60" ${line}/>` +
+      `<path d="M11 6Q20 20 11 34Q34 34 46 20Q34 6 11 6Z" ${line} stroke-linejoin="round"/>`,
+    'gate-not': `<path d="M0 20H14M49 20H60M14 6L40 20L14 34Z" ${line} stroke-linejoin="round"/><circle cx="44.5" cy="20" r="4.5" ${line}/>`,
   };
 
+  // Symbols that are not 60 × 40. The npn transistor is 60 × 60: base at (0, 30),
+  // collector at (40, 0) and emitter at (40, 60).
+  const sizes = { 'transistor-npn': '0 0 60 60' };
+  symbols['transistor-npn'] =
+    `<circle cx="32" cy="30" r="18" ${line}/>` +
+    `<path d="M0 30H24M24 24L40 14V0M24 36L40 46V60" ${line} stroke-linejoin="round"/>` +
+    `<path d="M24 18V42" ${plate}/>` +
+    `<path d="M37 44L29.8 43.7L33.5 37.8Z" fill="currentColor"/>`;
+
   const defs = Object.entries(symbols)
-    .map(([id, body]) => `<symbol id="sym-${id}" viewBox="0 0 60 40">${body}</symbol>`)
+    .map(([id, body]) => `<symbol id="sym-${id}" viewBox="${sizes[id] || '0 0 60 40'}">${body}</symbol>`)
     .join('');
 
   document.body.insertAdjacentHTML(

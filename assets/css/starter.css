@@ -271,6 +271,91 @@
 .match-col:has(.is-matched) .match-target { font-weight: 700; }
 .match-hint { margin: 0; color: var(--muted); font-size: 1rem; }
 
+/* Sorting into groups (.match.is-sort): each group's slot stacks the items sorted into it */
+.match.is-sort .match-items { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+.match.is-sort .match-targets { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.match.is-sort .match-col { align-content: start; }
+.match.is-sort .match-slot { flex-direction: column; gap: 8px; padding: 8px; min-height: 120px; }
+.match.is-sort .match-slot:has(.match-item) { border-color: var(--border); }
+.match.is-sort .match-slot .match-item { flex: none; min-height: 48px; font-size: 1.05rem; }
+.match.is-sort .match-target { order: -1; font-weight: 700; }
+.match-item.is-text { font-size: 1.05rem; }
+
+/* Type-in answers (.q-input) */
+.answer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+}
+.answer-label { font-weight: 700; }
+.answer {
+  width: 7.5em;
+  min-height: 52px;
+  padding: 8px 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+}
+.answer:focus { outline: 3px solid var(--accent); outline-offset: 1px; }
+.answer.is-correct { border-color: var(--good); background: var(--good-bg); }
+.answer.is-wrong { border-color: var(--bad); background: var(--bad-bg); }
+.answer-unit { font-weight: 700; }
+.q-check { min-height: 52px; }
+.mistake { display: none; }
+
+/* Working laid out the SQA way: relationship, substitution, answer */
+.working { margin: 0; padding: 0; list-style: none; font-variant-numeric: tabular-nums; }
+.working li + li { margin-top: 2px; }
+
+/* Data tables in questions */
+.data-table {
+  border-collapse: collapse;
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+.data-table th, .data-table td { padding: 8px 14px; border: 1px solid var(--border); text-align: center; }
+.data-table th { background: var(--bg); }
+
+/* Truth tables (.q-truth) */
+.truth {
+  border-collapse: collapse;
+  margin: 0 0 14px;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+}
+.truth th, .truth td { padding: 6px 14px; border: 1px solid var(--border); text-align: center; }
+.truth th { background: var(--bg); }
+.truth-cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  min-height: 52px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--lift);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.truth-cell:not(:disabled):active { transform: translateY(3px); box-shadow: none; }
+.truth-cell:disabled { cursor: default; }
+.truth-cell.is-correct { border-color: var(--good); background: var(--good-bg); }
+.truth-cell.is-wrong { border-color: var(--bad); background: var(--bad-bg); }
+.truth-cell.is-wrong::after { content: "Check"; color: var(--bad); font-size: 0.75rem; }
+
 /* Circuit diagrams (symbols come from assets/js/circuit-symbols.js) */
 .circuit {
   display: block;
@@ -302,6 +387,8 @@
   color: var(--good);
 }
 .show-answers .match-item:not(.is-matched)::after { content: attr(data-label); }
+.show-answers .q:not(.is-solved) .truth-cell { border-style: dashed; border-color: var(--good); }
+.show-answers .q:not(.is-solved) .truth-cell::after { content: "Answer " attr(data-answer); color: var(--good); font-size: 0.75rem; }
 .show-answers .q:not(.is-solved) .q-explain {
   display: block;
   margin-top: 14px;
