@@ -304,6 +304,8 @@ a.level:active { transform: translateY(3px); box-shadow: 0 0 0 var(--lift); }
 .unit-topics { margin: 6px 0 0; color: var(--muted); font-size: 1rem; }
 .unit .empty { margin: 14px 0 0; color: var(--muted); font-style: italic; }
 .units { padding: 16px 0 48px; }
+/* Tools section: sits above the units, marked with the level colour */
+.unit-tools { border-left: 8px solid var(--level-colour, var(--accent)); }
 
 .starter-list {
   display: grid;
