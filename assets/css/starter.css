@@ -195,15 +195,26 @@
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 10px;
 }
+.match-items[hidden] { display: none; }
 .match-item svg { width: 96px; height: 64px; }
 .match-item.is-selected,
 .match-target.is-selected {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent);
 }
-.match-target.is-matched { opacity: 0.6; }
-.match-item.is-matched::after { content: attr(data-label); }
 .match-item::after { font-size: 1rem; font-weight: 600; color: var(--good); }
+
+/* Each name sits under an empty slot; a correct match moves the symbol into it */
+.match-col { display: grid; gap: 8px; }
+.match-slot {
+  display: flex;
+  min-height: 96px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+}
+.match-slot:has(.match-item) { border-color: transparent; }
+.match-slot .match-item { flex: 1; }
+.match-col:has(.is-matched) .match-target { font-weight: 700; }
 .match-hint { margin: 0; color: var(--muted); font-size: 1rem; }
 
 /* Circuit diagrams (symbols come from assets/js/circuit-symbols.js) */

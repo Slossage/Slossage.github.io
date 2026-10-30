@@ -178,9 +178,21 @@
       </div>
 
       <div class="q q-mcq">
-        <p class="q-prompt"><span class="q-num">7.</span>In circuit B, one lamp breaks. What happens to the other lamp?</p>
+        <p class="q-prompt"><span class="q-num">7.</span>In this circuit, lamp X breaks. What happens to lamp Y?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 320 180" role="img" aria-label="Two lamps, X and Y, on separate parallel branches with a cell">
+            <path class="wire" d="M130 150H30V30H130M190 30H290V150H190M30 90H130M190 90H290"/>
+            <use href="#sym-lamp" x="130" y="10" width="60" height="40"/>
+            <use href="#sym-lamp" x="130" y="70" width="60" height="40"/>
+            <use href="#sym-cell" x="130" y="130" width="60" height="40"/>
+            <circle class="dot" cx="30" cy="90" r="5"/>
+            <circle class="dot" cx="290" cy="90" r="5"/>
+            <text class="label" x="215" y="22">X</text>
+            <text class="label" x="215" y="82">Y</text>
+          </svg>
+        </figure>
         <div class="options is-row">
-          <button type="button" class="option" data-feedback="That's what happens in a series circuit, where one gap breaks the only loop. Circuit B is parallel.">It goes out too</button>
+          <button type="button" class="option" data-feedback="That's what happens in a series circuit, where one gap breaks the only loop. This circuit is parallel.">It goes out too</button>
           <button type="button" class="option" data-correct>It stays lit</button>
           <button type="button" class="option" data-feedback="Each branch of a parallel circuit works on its own, so the other lamp carries on as before.">It gets much brighter</button>
         </div>

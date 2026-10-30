@@ -3,8 +3,9 @@
 //   .q.q-mcq     multiple choice: .option buttons, mark the right one with data-correct.
 //                Optional data-feedback on wrong options, and a hidden .q-explain shown
 //                once the question is solved (or when the teacher shows answers).
-//   .q.q-match   tap-to-match: .match-item and .match-target buttons that pair up by data-key.
-//                Give each .match-item a data-label: it appears under the item once matched.
+//   .q.q-match   tap-to-match: .match-item buttons (in .match-items) and .match-target buttons
+//                (in .match-targets) that pair up by data-key. A matched item moves into a slot
+//                above its target. Give each .match-item a data-label for Show answers.
 //   .q-feedback  empty element inside each .q where feedback is written (aria-live).
 //   [data-show-answers]  button that toggles answers for the whole page (teacher control).
 //   [data-reset]         button that clears every answer on the page.
@@ -48,6 +49,30 @@
     let selected = null;
     const explain = q.querySelector('.q-explain');
     const items = q.querySelectorAll('.match-item');
+    const pool = q.querySelector('.match-items');
+
+    // Give every target an empty slot above it; a correctly matched item moves into that slot
+    q.querySelectorAll('.match-target').forEach((target) => {
+      const col = document.createElement('div');
+      const slot = document.createElement('div');
+      col.className = 'match-col';
+      slot.className = 'match-slot';
+      target.before(col);
+      col.append(slot, target);
+    });
+
+    // Move an item into its slot with a short glide (skipped if the device asks for reduced motion)
+    function place(item, target) {
+      const from = item.getBoundingClientRect();
+      target.previousElementSibling.append(item);
+      if (pool && !pool.querySelector('.match-item')) pool.hidden = true;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const to = item.getBoundingClientRect();
+      item.animate(
+        [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
+        { duration: 350, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }
+      );
+    }
 
     function select(btn) {
       if (selected) selected.classList.remove('is-selected');
@@ -68,6 +93,7 @@
         select(null);
         if (a.dataset.key === btn.dataset.key) {
           [a, btn].forEach((b) => { b.classList.add('is-matched'); b.disabled = true; });
+          place(isItem ? btn : a, isItem ? a : btn);
           const left = [...items].filter((b) => !b.disabled).length;
           if (left === 0) {
             solve(q);
