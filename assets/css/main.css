@@ -1,0 +1,159 @@
+/* Shared styles for every page. No external fonts or CDNs (school web filters). */
+
+:root {
+  --bg: #f7f8fb;
+  --surface: #ffffff;
+  --text: #14182b;
+  --muted: #4a5170;
+  --border: #d5d9e6;
+  --accent: #1f4fd1;
+  --accent-text: #ffffff;
+  --radius: 14px;
+  --tap: 44px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* One colour per level, all paired with a text label so colour is never the only cue */
+  --bge: #0f766e;
+  --n4: #6d28d9;
+  --n5: #1f4fd1;
+  --higher: #b45309;
+  --ah: #be185d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1220;
+    --surface: #181c2e;
+    --text: #eef0f7;
+    --muted: #aab1cc;
+    --border: #2c3250;
+    --accent: #7aa2ff;
+    --accent-text: #0f1220;
+    --bge: #2dd4bf;
+    --n4: #a78bfa;
+    --n5: #7aa2ff;
+    --higher: #fbbf24;
+    --ah: #f472b6;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+a { color: var(--accent); }
+
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+}
+.brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.brand span { color: var(--accent); }
+
+/* Hero */
+.hero { padding: 48px 0 24px; }
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+}
+.hero p {
+  color: var(--muted);
+  font-size: 1.25rem;
+  max-width: 40em;
+  margin: 0;
+}
+
+/* Level cards */
+.levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 24px 0 56px;
+  margin: 0;
+  list-style: none;
+}
+.level {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 20px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 6px solid var(--level-colour, var(--accent));
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
+}
+a.level:active { transform: scale(0.99); }
+.level h2 { margin: 0; font-size: 1.5rem; }
+.level .stage { color: var(--muted); }
+.level .status {
+  margin-top: auto;
+  padding-top: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--level-colour, var(--accent));
+}
+.level[data-level="bge"]    { --level-colour: var(--bge); }
+.level[data-level="n4"]     { --level-colour: var(--n4); }
+.level[data-level="n5"]     { --level-colour: var(--n5); }
+.level[data-level="higher"] { --level-colour: var(--higher); }
+.level[data-level="ah"]     { --level-colour: var(--ah); }
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 1rem;
+  padding: 24px 0 40px;
+}
+
+/* Generic centred message page (404 etc.) */
+.message {
+  padding: 80px 0;
+  text-align: center;
+}
+.message h1 { font-size: 2.5rem; margin: 0 0 12px; }
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+  text-decoration: none;
+}
