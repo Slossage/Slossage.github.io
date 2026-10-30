@@ -4,8 +4,9 @@
 //                Optional data-feedback on wrong options, and a hidden .q-explain shown
 //                once the question is solved (or when the teacher shows answers).
 //   .q.q-match   tap-to-match: .match-item buttons (in .match-items) and .match-target buttons
-//                (in .match-targets) that pair up by data-key. A matched item moves into a slot
-//                above its target. Give each .match-item a data-label for Show answers.
+//                (in .match-targets) that pair up by data-key. Pupils drag an item onto its
+//                target, or tap one then the other. A matched item moves into a slot above its
+//                target. Give each .match-item a data-label for Show answers.
 //   .q-feedback  empty element inside each .q where feedback is written (aria-live).
 //   .hint        optional <details class="hint"><summary>Hint</summary><p>…</p></details> inside a .q.
 //                Needs no script; Reset closes it again.
@@ -63,12 +64,14 @@
       col.append(slot, target);
     });
 
-    // Move an item into its slot with a short glide (skipped if the device asks for reduced motion)
-    function place(item, target) {
+    const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Run a DOM change, then glide the item from where it was to where it ends up
+    function glide(item, change) {
       const from = item.getBoundingClientRect();
-      target.previousElementSibling.append(item);
-      if (pool && !pool.querySelector('.match-item')) pool.hidden = true;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      item.style.transform = '';
+      change();
+      if (reduceMotion()) return;
       const to = item.getBoundingClientRect();
       item.animate(
         [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
@@ -82,8 +85,39 @@
       if (btn) btn.classList.add('is-selected');
     }
 
+    function nudge(b) {
+      b.classList.remove('is-wrong');
+      void b.offsetWidth; // restart the nudge animation
+      b.classList.add('is-wrong');
+      setTimeout(() => b.classList.remove('is-wrong'), 600);
+    }
+
+    // Shared by tapping and dragging: true if the item belongs with the target
+    function tryMatch(item, target) {
+      if (item.dataset.key !== target.dataset.key) {
+        say(q, 'bad', 'Not a match.', 'Try again.');
+        return false;
+      }
+      [item, target].forEach((b) => { b.classList.add('is-matched'); b.disabled = true; });
+      glide(item, () => {
+        target.previousElementSibling.append(item);
+        if (pool && !pool.querySelector('.match-item')) pool.hidden = true;
+      });
+      const left = [...items].filter((b) => !b.disabled).length;
+      if (left === 0) {
+        solve(q);
+        say(q, 'good', 'All matched!', explain ? explain.innerHTML : '');
+      } else {
+        say(q, 'good', 'Match!', left + ' to go.');
+      }
+      return true;
+    }
+
+    // Tap one, then tap its partner
+    let dragged = false;
     q.querySelectorAll('.match-item, .match-target').forEach((btn) => {
       btn.addEventListener('click', () => {
+        if (dragged) { dragged = false; return; } // the click that ends a drag
         if (btn.disabled) return;
         const isItem = btn.classList.contains('match-item');
         // Tapping the same side again just changes which one is picked
@@ -93,26 +127,68 @@
         }
         const a = selected;
         select(null);
-        if (a.dataset.key === btn.dataset.key) {
-          [a, btn].forEach((b) => { b.classList.add('is-matched'); b.disabled = true; });
-          place(isItem ? btn : a, isItem ? a : btn);
-          const left = [...items].filter((b) => !b.disabled).length;
-          if (left === 0) {
-            solve(q);
-            say(q, 'good', 'All matched!', explain ? explain.innerHTML : '');
-          } else {
-            say(q, 'good', 'Match!', left + ' to go.');
-          }
-        } else {
-          [a, btn].forEach((b) => {
-            b.classList.remove('is-wrong');
-            void b.offsetWidth; // restart the nudge animation
-            b.classList.add('is-wrong');
-            setTimeout(() => b.classList.remove('is-wrong'), 600);
-          });
-          say(q, 'bad', 'Not a match.', 'Try again.');
-        }
+        const [item, target] = isItem ? [btn, a] : [a, btn];
+        if (!tryMatch(item, target)) [item, target].forEach(nudge);
       });
+    });
+
+    // Or drag an item onto its name. A press only becomes a drag once the finger moves,
+    // so a plain tap still works as above.
+    items.forEach((item) => {
+      let start = null;
+      let over = null;
+
+      // The column under the finger, looking past the dragged item itself
+      const colAt = (x, y) => {
+        const el = document.elementsFromPoint(x, y).find((n) => !item.contains(n));
+        const col = el && el.closest('.match-col');
+        return col && q.contains(col) && !col.querySelector('.match-target').disabled ? col : null;
+      };
+      const setOver = (col) => {
+        if (over) over.classList.remove('is-over');
+        over = col;
+        if (col) col.classList.add('is-over');
+      };
+
+      item.addEventListener('pointerdown', (e) => {
+        if (item.disabled || e.button > 0) return;
+        start = { x: e.clientX, y: e.clientY, id: e.pointerId, moving: false };
+        // Keep receiving this pointer's moves even after it leaves the item
+        item.setPointerCapture(e.pointerId);
+      });
+
+      item.addEventListener('pointermove', (e) => {
+        if (!start || e.pointerId !== start.id) return;
+        const dx = e.clientX - start.x;
+        const dy = e.clientY - start.y;
+        if (!start.moving) {
+          if (Math.hypot(dx, dy) < 8) return;
+          start.moving = true;
+          select(null);
+          item.classList.add('is-dragging');
+        }
+        item.style.transform = `translate(${dx}px, ${dy}px)`;
+        setOver(colAt(e.clientX, e.clientY));
+      });
+
+      const end = (e) => {
+        if (!start || e.pointerId !== start.id) return;
+        const wasMoving = start.moving;
+        start = null;
+        if (!wasMoving) return;
+        dragged = true;
+        setTimeout(() => { dragged = false; }, 0);
+        item.classList.remove('is-dragging');
+        const col = e.type === 'pointerup' ? over : null;
+        setOver(null);
+        const target = col && col.querySelector('.match-target');
+        if (target && tryMatch(item, target)) return;
+        // Not dropped on its name: slide back to where it came from
+        glide(item, () => {});
+        if (target) nudge(target);
+      };
+      item.addEventListener('pointerup', end);
+      item.addEventListener('pointercancel', end);
     });
   }
 

@@ -220,6 +220,24 @@
   gap: 10px;
 }
 .match-items[hidden] { display: none; }
+
+/* Dragging: the page must not scroll while a symbol is being dragged */
+.match-item {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  cursor: grab;
+}
+.match-item:disabled { cursor: default; }
+.match-item.is-dragging {
+  z-index: 10;
+  cursor: grabbing;
+  border-color: var(--accent);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+}
+.match-col.is-over .match-slot { border-color: var(--accent); background: var(--bg); }
+.match-col.is-over .match-target { border-color: var(--accent); }
 .match-item svg { width: 96px; height: 64px; }
 .match-item.is-selected,
 .match-target.is-selected {
