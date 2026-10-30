@@ -17,6 +17,8 @@
 //                feedback for common wrong answers.
 //   .q.q-truth   truth table: .truth-cell buttons with data-answer="0" or "1". Tapping a cell
 //                cycles ? → 0 → 1; the .q-check button marks the whole table.
+//                Give the .q data-options="BB Bb bb" to cycle through other choices instead,
+//                for example the boxes of a Punnett square.
 //   .q-feedback  empty element inside each .q where feedback is written (aria-live).
 //   .hint        optional <details class="hint"><summary>Hint</summary><p>…</p></details> inside a .q.
 //                Needs no script; Reset closes it again.
@@ -335,15 +337,17 @@
   function initTruth(q) {
     const cells = [...q.querySelectorAll('.truth-cell')];
     const explain = q.querySelector('.q-explain');
+    const options = (q.dataset.options || '0 1').split(/\s+/);
+    const [one, many] = q.dataset.options ? ['box', 'boxes'] : ['row', 'rows'];
     cells.forEach((cell) => {
       cell.addEventListener('click', () => {
-        cell.textContent = cell.textContent === '0' ? '1' : '0';
+        cell.textContent = options[(options.indexOf(cell.textContent) + 1) % options.length];
         cell.classList.remove('is-wrong');
       });
     });
     q.querySelector('.q-check').addEventListener('click', () => {
-      if (cells.some((c) => c.textContent !== '0' && c.textContent !== '1')) {
-        say(q, 'bad', 'Not finished.', 'Tap every ? to fill in each row first.');
+      if (cells.some((c) => !options.includes(c.textContent))) {
+        say(q, 'bad', 'Not finished.', 'Tap every ? to fill in each ' + one + ' first.');
         return;
       }
       const wrong = cells.filter((c) => c.textContent !== c.dataset.answer);
@@ -353,8 +357,8 @@
         solve(q);
         say(q, 'good', 'Correct!', explain ? explain.innerHTML : '');
       } else {
-        say(q, 'bad', 'Not quite.', (wrong.length === 1 ? '1 row is' : wrong.length + ' rows are') +
-          ' wrong, marked "Check". Tap to change them.');
+        say(q, 'bad', 'Not quite.', (wrong.length === 1 ? '1 ' + one + ' is' : wrong.length + ' ' + many + ' are') +
+          ' wrong, marked "Check". Tap ' + (wrong.length === 1 ? 'it' : 'them') + ' to change.');
       }
     });
   }
