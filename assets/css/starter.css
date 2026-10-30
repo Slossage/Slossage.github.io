@@ -267,6 +267,12 @@
   border-radius: 12px;
 }
 .match-slot:has(.match-item) { border-color: transparent; }
+.match-slot { transition: border-color 0.3s; }
+/* Left behind in the pool where an item used to be, so the others stay put */
+.match-ghost {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+}
 .match-slot .match-item { flex: 1; }
 .match-col:has(.is-matched) .match-target { font-weight: 700; }
 .match-hint { margin: 0; color: var(--muted); font-size: 1rem; }

@@ -28,11 +28,60 @@
 
   const originals = new Map();
 
+  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const EASE = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
+
+  // Animate a box's size so whatever sits below it slides along instead of jumping.
+  // A newer animation on the same box replaces the older one. With clip, the box hides
+  // its contents while it is smaller than them.
+  const sizing = new WeakMap();
+  function resizeBox(el, frames, opts, clip) {
+    const old = sizing.get(el);
+    if (old) old.cancel();
+    const a = el.animate(frames, Object.assign({ duration: 350, easing: EASE }, opts));
+    sizing.set(el, a);
+    if (clip) el.style.overflow = 'hidden';
+    const done = () => {
+      if (sizing.get(el) !== a) return;
+      sizing.delete(el);
+      if (clip) el.style.overflow = '';
+    };
+    a.addEventListener('finish', done);
+    a.addEventListener('cancel', done);
+    return a;
+  }
+
+  // Run a DOM change, then ease the box from its old height to its new one
+  function easeHeight(el, change, clip) {
+    const was = el.offsetHeight;
+    const old = sizing.get(el);
+    if (old) old.cancel();
+    change();
+    const now = el.offsetHeight;
+    if (was !== now && !reduceMotion()) {
+      resizeBox(el, [{ height: was + 'px' }, { height: now + 'px' }], {}, clip);
+    }
+  }
+
   function say(q, kind, title, html) {
     const box = q.querySelector('.q-feedback');
     if (!box) return;
-    box.className = 'q-feedback is-' + kind;
-    box.innerHTML = '<strong>' + title + '</strong> ' + (html || '');
+    const write = () => {
+      box.className = 'q-feedback is-' + kind;
+      box.innerHTML = '<strong>' + title + '</strong> ' + (html || '');
+    };
+    if (box.innerHTML) {
+      easeHeight(box, write, true);
+      return;
+    }
+    // The first message fades in, with its height, padding and margin growing from nothing
+    write();
+    if (reduceMotion()) return;
+    const s = getComputedStyle(box);
+    resizeBox(box, [
+      { height: '0px', paddingTop: '0px', paddingBottom: '0px', marginTop: '0px', opacity: 0 },
+      { height: box.offsetHeight + 'px', paddingTop: s.paddingTop, paddingBottom: s.paddingBottom, marginTop: s.marginTop, opacity: 1 }
+    ], {}, true);
   }
 
   function solve(q) {
@@ -81,19 +130,32 @@
       col.append(slot, target);
     });
 
-    const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // Run a DOM change, then glide the item from where it was to where it ends up
+    // Run a DOM change, then glide the item from where it was to where it ends up,
+    // stretching from its old size to its new one
+    const glides = new WeakMap();
     function glide(item, change) {
       const from = item.getBoundingClientRect();
       item.style.transform = '';
       change();
       if (reduceMotion()) return;
       const to = item.getBoundingClientRect();
-      item.animate(
-        [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
-        { duration: 350, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }
-      );
+      const move = `translate(${from.left - to.left}px, ${from.top - to.top}px)`;
+      const scale = `scale(${from.width / to.width}, ${from.height / to.height})`;
+      glides.set(item, item.animate(
+        [{ transformOrigin: '0 0', transform: move + ' ' + scale }, { transformOrigin: '0 0', transform: 'none' }],
+        { duration: 350, easing: EASE }
+      ));
+    }
+
+    // Once every item has gone, fold the empty pool away so the names slide up
+    function foldPool() {
+      if (reduceMotion()) { pool.hidden = true; return; }
+      const gap = parseFloat(getComputedStyle(pool.parentElement).rowGap) || 0;
+      const a = resizeBox(pool, [
+        { height: pool.offsetHeight + 'px', marginBottom: '0px', opacity: 1 },
+        { height: '0px', marginBottom: -gap + 'px', opacity: 0 }
+      ], { duration: 400, delay: 250, fill: 'both' }, true);
+      a.addEventListener('finish', () => { pool.hidden = true; a.cancel(); });
     }
 
     function select(btn) {
@@ -123,10 +185,21 @@
         target.classList.add('is-matched');
         target.disabled = true;
       }
-      glide(item, () => {
-        target.previousElementSibling.append(item);
-        if (pool && !pool.querySelector('.match-item')) pool.hidden = true;
+      // A faint outline keeps the item's place, so the rest of the pool doesn't shuffle up,
+      // and the slot eases to its new height (it grows as a group fills up)
+      const slot = target.previousElementSibling;
+      easeHeight(slot, () => {
+        glide(item, () => {
+          if (item.parentElement === pool) {
+            const ghost = document.createElement('div');
+            ghost.className = 'match-ghost';
+            ghost.style.height = item.offsetHeight + 'px';
+            item.before(ghost);
+          }
+          slot.append(item);
+        });
       });
+      if (pool && !pool.querySelector('.match-item')) foldPool();
       const left = [...items].filter((b) => !b.disabled).length;
       if (left === 0) {
         solve(q);
@@ -176,7 +249,9 @@
 
       item.addEventListener('pointerdown', (e) => {
         if (item.disabled || e.button > 0) return;
-        start = { x: e.clientX, y: e.clientY, id: e.pointerId, moving: false };
+        const sliding = glides.get(item);
+        if (sliding) sliding.cancel(); // grabbed again while still sliding back
+        start ={ x: e.clientX, y: e.clientY, id: e.pointerId, moving: false };
         // Keep receiving this pointer's moves even after it leaves the item
         item.setPointerCapture(e.pointerId);
       });
