@@ -259,10 +259,10 @@
 .cb-help li + li { margin-top: 4px; }
 
 /* ---------- Walkthroughs (assets/js/circuit-walkthroughs.js) ---------- */
-.wt-section { margin-top: 28px; }
-.wt-section > h2, .cb-build-title { margin: 0 0 6px; font-family: var(--font-head); font-size: 1.6rem; }
+/* Walkthroughs page (n5/circuit-walkthroughs.html) */
+.wt-section { margin-top: 24px; }
 .wt-intro { margin: 0 0 16px; }
-.wt-picker h3 { margin: 18px 0 10px; font-size: 1.15rem; color: var(--muted); }
+.wt-picker h2 { margin: 18px 0 10px; font-size: 1.15rem; color: var(--muted); }
 .wt-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -367,7 +367,7 @@
   .cb-guided .cb-board { max-height: 38vh; }
 }
 
-.wt-step h4 { margin: 0 0 8px; font-family: var(--font-head); font-size: 1.25rem; }
+.wt-step h3 { margin: 0 0 8px; font-family: var(--font-head); font-size: 1.25rem; }
 .wt-step > p { margin: 0 0 12px; }
 .wt-step .q { margin-top: 14px; padding: 16px 18px; }
 .wt-step .q-prompt { font-size: 1.15rem; }
@@ -492,4 +492,5 @@
 .wt-nav .tool:disabled { opacity: 0.4; }
 .wt-next { background: var(--level-colour, var(--accent)); border-color: var(--level-colour, var(--accent)); color: var(--on-level); }
 
-.cb-build-title { margin-top: 36px; }
+/* On the builder page: a pointer to the walkthroughs */
+.cb-see-also { margin: 0 0 16px; }
