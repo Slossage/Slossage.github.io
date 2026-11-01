@@ -119,6 +119,42 @@
   font-size: 1rem;
 }
 .cb-warning[hidden] { display: none; }
+.cb-warning span { display: block; }
+.cb-warning span + span { margin-top: 6px; }
+
+/* Light, Temperature and Sound sliders (only shown when a component that senses them is on the grid) */
+.cb-env {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: -2px 0 10px;
+}
+.cb-env-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap);
+  font-weight: 700;
+}
+.cb-env-item[hidden] { display: none; }
+.cb-env-item output { min-width: 6.5em; color: var(--muted); font-weight: 600; }
+.cb-env input, .cb-slide {
+  width: 180px;
+  height: var(--tap);
+  margin: 0;
+  accent-color: var(--level-colour, var(--accent));
+  touch-action: manipulation;
+}
+.cb-pick {
+  min-height: var(--tap);
+  padding: 4px 10px;
+  border: var(--edge-w) solid var(--edge);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+}
 
 /* The grid. touch-action: none so a finger on the grid draws instead of scrolling;
    it is never taller than the screen, so there is always somewhere to scroll from. */
@@ -165,6 +201,7 @@
 .cb-letter { fill: currentColor; font-size: 21px; font-weight: 700; font-family: var(--font); }
 .cb-lit { fill: var(--cb-glow); }
 .cb-lit-led { fill: var(--cb-led); }
+.cb-sound { fill: none; stroke: var(--cb-flow); stroke-width: 3.5; stroke-linecap: round; }
 .cb-comp.is-bad { color: var(--bad); opacity: 0.75; }
 .cb-sel { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 7 5; }
 .cb-short { fill: var(--bad-bg); stroke: var(--bad); stroke-width: 3; }

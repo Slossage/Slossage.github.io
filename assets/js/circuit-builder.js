@@ -2,12 +2,16 @@
 // run along the grid (so every corner is a right angle), and see what happens: lamps light,
 // meters give readings, and moving dots show the current splitting at junctions.
 //
-// Markup (see bge/circuit-builder.html):
-//   [data-circuit-builder]   wrapper for one builder
+// Markup (see bge/circuit-builder.html and n5/circuit-builder.html):
+//   [data-circuit-builder]   wrapper for one builder. Optional attributes:
+//       data-key="…"         localStorage key, so each level's builder keeps its own circuit
+//       data-adjust="…"      component types whose value pupils can change (resistor battery fuse capacitor)
+//       data-prefixes        show small currents in mA and big resistances in kΩ
 //     .cb-task[data-check]   one task each; the builder ticks it off when the circuit does the job.
 //                            Each has a .q-feedback, an optional .hint and a .q-explain (the answer).
-//     .cb-palette button[data-type]   one button per component
+//     .cb-palette button[data-type]   one button per component; optional data-value sets its starting value
 //     .cb-board              the <svg> grid
+// The Light, Temperature and Sound sliders are added here, for pages whose palette needs them.
 // Needs circuit-symbols.js for the symbols, and works alongside starter.js (timer, Show answers, Reset).
 (function () {
   'use strict';
@@ -20,7 +24,6 @@
   const COLS = 19;                    // grid points across (x = 0 … 18)
   const ROWS = 11;                    // grid points down (y = 0 … 10)
   const at = (i) => S / 2 + i * S;    // grid index to SVG coordinate
-  const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
   const pk = (x, y) => x + ',' + y;
   const unpk = (k) => k.split(',').map(Number);
   // A wire is stored as unit-length edges between neighbouring grid points
@@ -29,36 +32,95 @@
   const ends = (e) => e.split('|').map(unpk);
 
   // ---------- Components and how they behave electrically ----------
-  // Cells are an EMF with a tiny internal resistance. Values are chosen so readings are tidy:
+  // Sources are an EMF with an internal resistance. Values are chosen so readings are tidy:
   // one lamp on one cell takes 0.30 A.
+  const OHMS = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 100, 150, 200, 220, 300,
+    470, 500, 1000, 2000, 2200, 4700, 5000, 10000];
   const TYPES = {
     cell:      { name: 'Cell', emf: 1.5, r: 0.01 },
-    battery:   { name: 'Battery', emf: 3, r: 0.02 },
+    battery:   { name: 'Battery', emf: 3, r: 0.02, unit: 'V', choices: [3, 4.5, 6, 9, 12] },
+    'solar-cell': { name: 'Solar cell', emf: 1.5, r: 2 },       // EMF goes up with the light level
+    microphone: { name: 'Microphone', emf: 0.5, r: 10 },        // gives AC when there is sound
     lamp:      { name: 'Lamp', R: 5 },
     switch:    { name: 'Switch' },
-    resistor:  { name: 'Resistor', R: 10 },
+    resistor:  { name: 'Resistor', R: 10, unit: 'Ω', choices: OHMS },
+    'variable-resistor': { name: 'Variable resistor', R: 1000, unit: 'Ω',
+      slider: [0, 10, 20, 50, 100, 150, 220, 330, 470, 680, 1000, 1500, 2200, 3300, 4700, 6800, 10000] },
+    ldr:       { name: 'LDR' },
+    thermistor: { name: 'Thermistor' },
     motor:     { name: 'Motor', R: 5, letter: 'M' },
-    led:       { name: 'LED' },
+    loudspeaker: { name: 'Loudspeaker', R: 8 },
+    led:       { name: 'LED', vf: 1.2, ron: 2 },   // only conducts once it has vf, one way round
+    diode:     { name: 'Diode', vf: 0.7, ron: 0.5 },
+    fuse:      { name: 'Fuse', value: 3, unit: 'A', choices: [0.5, 1, 2, 3, 5, 13] },
+    capacitor: { name: 'Capacitor', value: 2200, unit: 'µF', choices: [100, 470, 1000, 2200, 4700] },
     ammeter:   { name: 'Ammeter', R: 0.001, letter: 'A' },
     voltmeter: { name: 'Voltmeter', R: 1e7, letter: 'V' },
+    ohmmeter:  { name: 'Ohmmeter', R: 1e7, letter: 'Ω' },
+    // Transistors switch on once the base–emitter (gate–source) voltage reaches vth. The base and
+    // gate are treated as taking no current, as in the SQA "transistor as a switch" model.
+    npn:       { name: 'npn transistor', vth: 0.7, geom: 'transistor' },
+    mosfet:    { name: 'MOSFET', vth: 2.0, geom: 'transistor' },
+    relay:     { name: 'Relay', geom: 'relay' },
   };
   const SWITCH_R = 1e-4;
-  const LED_VF = 1.2;                 // LED only conducts once it has this much voltage, one way round
-  const LED_R = 2;
+  const TRANSISTOR_R = 0.1;           // collector–emitter (drain–source) when switched on
+  const FUSE_R = 0.01;
+  const COIL_R = 50;                  // relay coil
+  const COIL_ON = 0.02;               // relay closes with more current (A) than this in its coil
   const LAMP_FULL = 0.3 * 0.3 * 5;    // power (W) of one lamp on one cell = "normal" brightness
   const WORKING = 0.05;               // lamps and motors carrying more current (A) than this are on
-  const SHORT = 5;                    // a cell giving more current (A) than this is short-circuited
+  const SHORT_R = 0.3;                // a cell or battery whose circuit has less resistance than this is shorted
+  const TEST_V = 0.1;                 // an ohmmeter measures by pushing a small current from this voltage
+  const DT = 0.05;                    // time step (s) for capacitors charging and microphone AC
+  const MIC_HZ = 0.5;                 // slowed right down so the dots can be seen going back and forth
+  const LDR_R = (light) => 50 * Math.pow(200, 1 - light / 100);        // 10 kΩ dark … 50 Ω bright
+  const THERMISTOR_R = (temp) => 10000 * Math.pow(200, -temp / 100);   // 10 kΩ at 0 °C … 50 Ω at 100 °C
 
-  // The two ends of a component. For cells and the battery, end 0 is positive (the long plate);
-  // for the LED, current can only go in at end 0.
-  function ends2(c) {
-    const [dx, dy] = DIRS[c.rot];
-    return [[c.x - dx, c.y - dy], [c.x + dx, c.y + dy]];
+  // Where each kind of component's connections (pins) and body sit, as grid steps from its
+  // centre before turning. `box` and `anchor` place its symbol (in symbol units, 30 = one grid
+  // step), `sel` is the outline drawn round it, and `branches` are the pin pairs current flows between.
+  const GEOMS = {
+    two: { pins: [[-1, 0], [1, 0]], body: [[0, 0]], box: [0, 0, 60, 40], anchor: [30, 20],
+      sel: [-1.15, -0.6, 1.15, 0.6], branches: [[0, 1]] },
+    // Base (gate), collector (drain), emitter (source). Turning flips it, so the collector stays at the top.
+    transistor: { pins: [[-1, 0], [0, -1], [0, 1]], body: [[0, 0]], box: [0, 0, 60, 60], anchor: [30, 30],
+      sel: [-1.15, -1.15, 0.55, 1.15], branches: [[1, 2]], flips: true },
+    // Switch contacts along the top, coil along the bottom. Branch 0 is the coil, branch 1 the contacts.
+    relay: { pins: [[-1, -1], [1, -1], [-1, 1], [1, 1]], body: [[0, -1], [0, 0], [0, 1]], box: [0, -15, 60, 90],
+      anchor: [30, 30], sel: [-1.15, -1.6, 1.15, 1.5], branches: [[2, 3], [0, 1]] },
+  };
+  const geom = (c) => GEOMS[TYPES[c.type].geom || 'two'];
+
+  // A grid step from the component's centre, after flipping and turning it
+  function place(c, p) {
+    let [dx, dy] = p;
+    if (c.flip) dx = -dx;
+    for (let k = 0; k < c.rot; k++) [dx, dy] = [-dy, dx];
+    return [c.x + dx, c.y + dy];
   }
+  // For cells and the battery, pin 0 is positive (the long plate); for diodes and the LED,
+  // current can only go in at pin 0.
+  const pinsOf = (c) => geom(c).pins.map((p) => place(c, p));
+  const bodyOf = (c) => geom(c).body.map((p) => place(c, p));
+
+  function val(c) {
+    if (c.value != null) return c.value;
+    const t = TYPES[c.type];
+    return t.value != null ? t.value : t.emf != null ? t.emf : t.R;
+  }
+  const ADJUST = new Set((root.dataset.adjust || '').split(/\s+/).filter(Boolean));
+  const PREFIX = root.hasAttribute('data-prefixes');
+  const fromPalette = {};
+  root.querySelectorAll('.cb-palette [data-value]').forEach((b) => { fromPalette[b.dataset.type] = +b.dataset.value; });
+  const newComp = (type, x, y) =>
+    Object.assign({ id: 'new', type, x, y, rot: 0, closed: false }, type in fromPalette ? { value: fromPalette[type] } : {});
 
   // ---------- State ----------
-  const KEY = 'circuit-builder-v1';
+  const KEY = root.dataset.key || 'circuit-builder-v1';
+  const ENV_START = { light: 80, temp: 20, sound: 0 };
   let state = { comps: [], wires: [], next: 1 };
+  let env = Object.assign({}, ENV_START);
   let solved = new Set();
   let task = 0;
   let history = [];
@@ -67,18 +129,23 @@
   let drag = null;       // the drag in progress on the board
   let preview = null;    // { comp, bad } or { wire: edges, bad } drawn on top while dragging
   let showFlow = true;
+  const capV = new Map(); // capacitor id → voltage across it (not saved: capacitors start empty)
+  let clock = 0;          // seconds of simulated time, for the microphone's AC
 
   try {
     const saved = JSON.parse(localStorage.getItem(KEY));
     if (saved && saved.state) {
       state = saved.state;
+      // Drop any component this page doesn't know (saved by an older version)
+      state.comps = state.comps.filter((c) => TYPES[c.type]);
       solved = new Set(saved.solved || []);
       task = saved.task || 0;
+      if (saved.env) env = Object.assign(env, saved.env);
     }
   } catch (e) { /* storage blocked: start empty */ }
 
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify({ state, solved: [...solved], task })); } catch (e) { /* ignore */ }
+    try { localStorage.setItem(KEY, JSON.stringify({ state, solved: [...solved], task, env })); } catch (e) { /* ignore */ }
   }
 
   const clone = (st) => JSON.parse(JSON.stringify(st));
@@ -93,38 +160,39 @@
   // ---------- Layout rules ----------
   const inGrid = ([x, y]) => x >= 0 && y >= 0 && x < COLS && y < ROWS;
   const same = (a, b) => a[0] === b[0] && a[1] === b[1];
+  const has = (list, p) => list.some((q) => same(p, q));
 
-  // The middle of a component is under its symbol, so no wire or other component may use it
-  function midSet(st, skipId) {
+  // A component's body is under its symbol, so no wire or other component may use it
+  function midSet(st) {
     const s = new Set();
-    st.comps.forEach((c) => { if (c.id !== skipId) s.add(pk(c.x, c.y)); });
+    st.comps.forEach((c) => bodyOf(c).forEach((p) => s.add(pk(...p))));
     return s;
   }
 
   function canPlace(st, c) {
-    const [a, b] = ends2(c);
-    if (!inGrid(a) || !inGrid(b)) return false;
+    const pins = pinsOf(c), body = bodyOf(c);
+    if (!pins.concat(body).every(inGrid)) return false;
     for (const o of st.comps) {
       if (o.id === c.id) continue;
-      const [oa, ob] = ends2(o);
-      const m = [c.x, c.y];
-      if (same(m, [o.x, o.y]) || same(m, oa) || same(m, ob)) return false;
-      if (same([o.x, o.y], a) || same([o.x, o.y], b)) return false;
+      const op = pinsOf(o), ob = bodyOf(o);
+      if (body.some((p) => has(ob, p) || has(op, p))) return false;
+      if (ob.some((p) => has(pins, p))) return false;
     }
-    const mid = pk(c.x, c.y);
-    return !st.wires.some((e) => e.split('|').includes(mid));
+    const mids = new Set(body.map((p) => pk(...p)));
+    return !st.wires.some((e) => e.split('|').some((p) => mids.has(p)));
   }
 
   // Dropped onto a straight bit of wire: the component takes the place of the two edges under
   // it, turned to line up with the wire, so it is joined in without rewiring.
-  // Returns { comp, cut } or null if it doesn't fit there.
+  // Returns { comp, cut } or null if it doesn't fit there. Two-pin components only.
   function spliceInto(st, c) {
+    if (geom(c) !== GEOMS.two) return null;
     const mid = pk(c.x, c.y);
     const touching = st.wires.filter((e) => e.split('|').includes(mid));
     if (touching.length !== 2) return null;   // no wire here, a corner end, or a junction
     for (const rot of [c.rot, (c.rot + 1) % 4]) {
       const t = Object.assign({}, c, { rot });
-      const cut = ends2(t).map(([x, y]) => ek(x, y, c.x, c.y));
+      const cut = pinsOf(t).map(([x, y]) => ek(x, y, c.x, c.y));
       if (!cut.every((e) => touching.includes(e))) continue;
       const rest = Object.assign({}, st, { wires: st.wires.filter((e) => !cut.includes(e)) });
       if (canPlace(rest, t)) return { comp: t, cut };
@@ -173,8 +241,8 @@
   }
 
   // ---------- Simulation ----------
-  // Wires join grid points into "nets" (one voltage each). Every component is a branch between
-  // two nets: current a→b inside it is I = G (Va − Vb − E). Solved with nodal analysis.
+  // Wires join grid points into "nets" (one voltage each). Every component is one or more
+  // branches between two nets: current a→b inside it is I = G (Va − Vb − E). Solved with nodal analysis.
   function netsOf(st) {
     const parent = new Map();
     const find = (k) => {
@@ -214,10 +282,27 @@
     return x;
   }
 
-  // opts.removed: ids treated as taken out; opts.switches: Map id → closed, overriding the board
+  function emfOf(c, light, sound) {
+    if (c.type === 'solar-cell') return TYPES[c.type].emf * light / 100;
+    if (c.type === 'microphone') return TYPES[c.type].emf * (sound / 100) * Math.sin(2 * Math.PI * MIC_HZ * clock);
+    return val(c);
+  }
+  function resistance(c, light, temp) {
+    if (c.type === 'ldr') return LDR_R(light);
+    if (c.type === 'thermistor') return THERMISTOR_R(temp);
+    return c.type === 'resistor' || c.type === 'variable-resistor' ? val(c) : TYPES[c.type].R;
+  }
+
+  // opts.removed: ids treated as taken out; opts.switches: Map id → closed, overriding the board;
+  // opts.light / temp / sound override the sliders; opts.capZero treats capacitors as empty;
+  // opts.test: id of an ohmmeter measuring (supplies off, the ohmmeter pushes a test current).
   function solve(st, opts = {}) {
     const removed = opts.removed || new Set();
     const switches = opts.switches || new Map();
+    const light = 'light' in opts ? opts.light : env.light;
+    const temp = 'temp' in opts ? opts.temp : env.temp;
+    const sound = 'sound' in opts ? opts.sound : env.sound;
+    const test = opts.test;
     const find = netsOf(st);
     const index = new Map();
     const node = (p) => {
@@ -226,26 +311,41 @@
       return index.get(r);
     };
     const els = [];
+    const parts = new Map();
     st.comps.forEach((c) => {
       if (removed.has(c.id)) return;
-      const [pa, pb] = ends2(c);
-      const el = { c, pa, pb, a: node(pa), b: node(pb), G: 0, E: 0 };
+      const pins = pinsOf(c);
+      const nodes = pins.map(node);
+      const list = geom(c).branches.map(([i, j], k) =>
+        ({ c, k, pa: pins[i], pb: pins[j], a: nodes[i], b: nodes[j], G: 0, E: 0 }));
+      const el = list[0];
       const t = TYPES[c.type];
-      if (t.emf) { el.G = 1 / t.r; el.E = t.emf; }
+      if (t.emf) { el.G = 1 / t.r; el.E = test ? 0 : emfOf(c, light, sound); }
       else if (c.type === 'switch') {
         const closed = switches.has(c.id) ? switches.get(c.id) : c.closed;
         el.G = closed ? 1 / SWITCH_R : 0;
-      } else if (c.type === 'led') { el.led = true; el.on = false; }
-      else el.G = 1 / t.R;
-      els.push(el);
+      } else if (c.type === 'fuse') el.G = c.blown ? 0 : 1 / FUSE_R;
+      else if (t.vf) { el.diode = t; el.on = false; }
+      else if (t.vth) { el.gate = [nodes[0], nodes[2]]; el.vth = t.vth; el.ron = TRANSISTOR_R; el.on = false; }
+      else if (c.type === 'relay') {
+        el.G = 1 / COIL_R;
+        Object.assign(list[1], { coil: el, ron: SWITCH_R, on: false });
+      } else if (c.type === 'capacitor') {
+        el.G = test ? 0 : (val(c) * 1e-6) / DT;
+        el.E = opts.capZero ? 0 : capV.get(c.id) || 0;
+      } else if (c.id === test) { el.G = 1e6; el.E = TEST_V; }
+      else el.G = 1 / Math.max(1e-3, resistance(c, light, temp));
+      list.forEach((e) => els.push(e));
+      parts.set(c.id, list);
     });
 
     const n = index.size;
     let V = new Array(n).fill(0);
-    // LEDs: guess which are on, solve, fix the guesses, repeat until nothing changes
-    for (let round = 0; round < 20; round++) {
+    // Diodes, transistors and relays: guess which are on, solve, fix the guesses, repeat until nothing changes
+    for (let round = 0; round < 30; round++) {
       els.forEach((el) => {
-        if (el.led) { el.G = el.on ? 1 / LED_R : 1e-9; el.E = el.on ? LED_VF : 0; }
+        if (el.diode) { el.G = el.on ? 1 / el.diode.ron : 1e-9; el.E = el.on ? el.diode.vf : 0; }
+        else if (el.gate || el.coil) el.G = el.on ? 1 / el.ron : 0;
       });
       const A = Array.from({ length: n }, () => new Array(n).fill(0));
       const rhs = new Array(n).fill(0);
@@ -257,11 +357,17 @@
       });
       V = n ? gauss(A, rhs) : [];
       let changed = false;
+      const flip = (el, on) => { if (on !== el.on) { el.on = on; changed = true; } };
       els.forEach((el) => {
-        if (!el.led) return;
-        const dv = V[el.a] - V[el.b];
-        if (el.on && dv < LED_VF) { el.on = false; changed = true; }
-        else if (!el.on && dv > LED_VF + 1e-6) { el.on = true; changed = true; }
+        if (el.diode) {
+          const dv = V[el.a] - V[el.b];
+          if (el.on && dv < el.diode.vf) flip(el, false);
+          else if (!el.on && dv > el.diode.vf + 1e-6) flip(el, true);
+        } else if (el.gate) flip(el, V[el.gate[0]] - V[el.gate[1]] >= el.vth);
+        else if (el.coil) {
+          const k = el.coil;
+          flip(el, Math.abs(k.G * (V[k.a] - V[k.b] - k.E)) > COIL_ON);
+        }
       });
       if (!changed) break;
     }
@@ -271,13 +377,32 @@
       // A cell whose two ends are joined by bare wire gets its full short-circuit current
       el.I = el.G * (V[el.a] - V[el.b] - el.E);
       el.V = V[el.a] - V[el.b];
-      byId.set(el.c.id, el);
+      if (el.k === 0) byId.set(el.c.id, el);
     });
-    return { els, byId, find };
+    const res = { els, byId, parts, find, ohm: new Map() };
+
+    // Ohmmeters: no reading if a supply is pushing a voltage across them; otherwise measure
+    if (test == null) {
+      st.comps.forEach((c) => {
+        if (c.type !== 'ohmmeter' || removed.has(c.id)) return;
+        if (Math.abs(byId.get(c.id).V) > 0.005) { res.ohm.set(c.id, { show: 'Error', error: true }); return; }
+        const t = solve(st, Object.assign({}, opts, { test: c.id }));
+        const I = Math.abs(t.byId.get(c.id).I);
+        if (I < TEST_V / 1e6) { res.ohm.set(c.id, { show: 'OL', test: t }); return; }
+        const R = Math.max(0, TEST_V / I - 1e-6);
+        res.ohm.set(c.id, { R, show: fmtR(R), test: t });
+      });
+    }
+    return res;
   }
 
   const current = (res, id) => (res.byId.has(id) ? Math.abs(res.byId.get(id).I) : 0);
-  const working = (res, id) => current(res, id) > WORKING;
+  function working(res, id) {
+    const el = res.byId.get(id);
+    if (!el) return false;
+    if (el.diode) return el.on && Math.abs(el.I) > 0.002;
+    return Math.abs(el.I) > WORKING;
+  }
 
   // How the current shares out along the wires inside each net (for the moving dots). Wires are
   // treated as equal small resistances; component currents go in and out at their ends.
@@ -318,8 +443,9 @@
 
   // ---------- Task checks ----------
   const ofType = (st, type) => st.comps.filter((c) => c.type === type);
-  const without = (st, ids) => solve(st, { removed: new Set(ids) });
+  const without = (st, ids, opts) => solve(st, Object.assign({}, opts, { removed: new Set(ids) }));
   const pairs = (list) => list.flatMap((a, i) => list.slice(i + 1).map((b) => [a, b]));
+  const close = (a, b, frac) => Math.abs(a - b) <= Math.abs(b) * frac;
 
   // Two working lamps where taking either out puts the other out too
   function seriesPair(st, res) {
@@ -332,6 +458,20 @@
     const lit = ofType(st, 'lamp').filter((c) => working(res, c.id));
     return pairs(lit).filter(([a, b]) =>
       working(without(st, [a.id]), b.id) && working(without(st, [b.id]), a.id));
+  }
+  // A meter joined across a component: its two ends are on the same nets as the component's
+  function across(res, m, c) {
+    const a = res.byId.get(m.id), b = res.byId.get(c.id);
+    return !!a && !!b && ((a.a === b.a && a.b === b.b) || (a.a === b.b && a.b === b.a));
+  }
+  // Resistors that the ohmmeter's test current passes through
+  const tested = (st, o) => ofType(st, 'resistor').filter((r) => current(o.test, r.id) > 1e-6);
+  // An output that is on at one slider setting and off at the other, and needs the transistor to work
+  function autoSwitch(st, key, onAt, offAt, outputs, trType) {
+    const on = solve(st, { [key]: onAt }), off = solve(st, { [key]: offAt });
+    const trs = ofType(st, trType);
+    return st.comps.some((o) => outputs.includes(o.type) && working(on, o.id) && !working(off, o.id) &&
+      trs.some((t) => !working(without(st, [t.id], { [key]: onAt }), o.id)));
   }
 
   const CHECKS = {
@@ -349,13 +489,8 @@
     parallel: (st, res) => parallelPairs(st, res).length > 0,
 
     // A voltmeter joined across a working lamp
-    voltage: (st, res) => ofType(st, 'voltmeter').some((v) => {
-      const ev = res.byId.get(v.id);
-      return ev && Math.abs(ev.V) > 0.1 && ofType(st, 'lamp').some((l) => {
-        const el = res.byId.get(l.id);
-        return working(res, l.id) && ((el.a === ev.a && el.b === ev.b) || (el.a === ev.b && el.b === ev.a));
-      });
-    }),
+    voltage: (st, res) => ofType(st, 'voltmeter').some((v) =>
+      Math.abs(res.byId.get(v.id).V) > 0.1 && ofType(st, 'lamp').some((l) => working(res, l.id) && across(res, v, l))),
 
     // Parallel lamps, an ammeter in each branch, and one ammeter for the total
     'current-split': (st, res) => {
@@ -386,12 +521,58 @@
           working(open2, l1.id) && !working(open2, l2.id)));
       });
     },
+
+    // An ohmmeter reading the sum of two or more resistors that all carry the same test current
+    'series-resistance': (st, res) => ofType(st, 'ohmmeter').some((m) => {
+      const o = res.ohm.get(m.id);
+      if (!o || o.R == null) return false;
+      const used = tested(st, o);
+      if (used.length < 2) return false;
+      const I0 = current(o.test, used[0].id);
+      return used.every((r) => close(current(o.test, r.id), I0, 0.01)) &&
+        close(o.R, used.reduce((s, r) => s + val(r), 0), 0.01);
+    }),
+
+    // An ohmmeter across two or more resistors that each have the full test voltage across them
+    'parallel-resistance': (st, res) => ofType(st, 'ohmmeter').some((m) => {
+      const o = res.ohm.get(m.id);
+      if (!o || o.R == null) return false;
+      const used = tested(st, o);
+      return used.length >= 2 && used.every((r) => close(Math.abs(o.test.byId.get(r.id).V), TEST_V, 0.01)) &&
+        close(o.R, 1 / used.reduce((s, r) => s + 1 / val(r), 0), 0.01);
+    }),
+
+    'fuse-blows': (st) => ofType(st, 'fuse').some((f) => f.blown),
+
+    // A voltmeter across a 20 Ω resistor reading 4.00 V (a 6 V supply shared with a 10 Ω resistor)
+    divider: (st, res) => ofType(st, 'voltmeter').some((m) => ofType(st, 'resistor').some((r) =>
+      val(r) === 20 && across(res, m, r) && Math.abs(Math.abs(res.byId.get(m.id).V) - 4) < 0.03)),
+
+    // A voltmeter across an LDR, in the dark, reading more than it does in bright light
+    'ldr-dark': (st, res) => env.light < 20 && ofType(st, 'voltmeter').some((m) => ofType(st, 'ldr').some((l) => {
+      if (!across(res, m, l)) return false;
+      const bright = solve(st, { light: 80 });
+      return Math.abs(res.byId.get(m.id).V) > Math.abs(bright.byId.get(m.id).V) + 0.1;
+    })),
+
+    'dark-switch': (st) => autoSwitch(st, 'light', 10, 90, ['led', 'lamp'], 'npn'),
+
+    'hot-switch': (st) => autoSwitch(st, 'temp', 80, 10, ['motor'], 'mosfet'),
+
+    // An LED or lamp that is on now but would be off if the capacitor had not charged up
+    delay: (st, res) => ofType(st, 'capacitor').length > 0 && ofType(st, 'switch').some((s) => s.closed) &&
+      (ofType(st, 'npn').length > 0 || ofType(st, 'mosfet').length > 0) &&
+      st.comps.some((o) => (o.type === 'led' || o.type === 'lamp') && working(res, o.id) &&
+        !working(solve(st, { capZero: true }), o.id)),
   };
 
   // Example circuits for each task (teacher only, under Show answers)
   const W = (...pts) => pts.slice(1).flatMap((q, i) => route(pts[i], q, pts[i][1] === q[1]));
   const C = (type, x, y, extra) => Object.assign({ type, x, y, rot: 0, closed: false }, extra);
   const loop = [W([8, 8], [5, 8], [5, 3], [8, 3]), W([10, 8], [13, 8], [13, 3], [10, 3])].flat();
+  const seriesWires = [W([8, 8], [4, 8], [4, 3], [6, 3]), W([8, 3], [10, 3]), W([10, 8], [14, 8], [14, 3], [12, 3])].flat();
+  const parallelWires = [W([8, 9], [5, 9], [5, 2], [8, 2]), W([5, 5], [8, 5]), W([10, 9], [13, 9], [13, 2], [10, 2]),
+    W([10, 5], [13, 5])].flat();
   const ladder = (top, bottom) => ({
     comps: [C(top, 6, 2, { closed: true }), C('lamp', 11, 2), C(top, 6, 5, { closed: true }), C('lamp', 11, 5),
       C('cell', 6, 9)].concat(bottom ? [C(bottom, 11, 9)] : []),
@@ -399,27 +580,56 @@
       W([12, 5], [15, 5]), W([3, 2], [3, 9], [5, 9]),
       bottom ? W([7, 9], [10, 9]).concat(W([12, 9], [15, 9], [15, 2])) : W([7, 9], [15, 9], [15, 2])].flat(),
   });
+  // Transistor switching circuit: supply on the left, a potential divider (top, bottom) at x = 6
+  // feeding the base, and the output in the collector. `supply` is the parts on the left-hand side.
+  const switching = (top, bottom, tr, output, ledResistor, supply) => ({
+    comps: supply.comps.concat([top, bottom, C(tr, 12, 5), output],
+      ledResistor ? [C('resistor', 9, 1, { value: 220 })] : []),
+    wires: supply.wires.concat(ledResistor ? W([2, 1], [8, 1]).concat(W([10, 1], [12, 1])) : W([2, 1], [12, 1]),
+      W([6, 1], [6, 2]), W([6, 4], [6, 6]), W([6, 5], [11, 5]), W([12, 3], [12, 4]), W([12, 6], [12, 9]),
+      W([2, 9], [12, 9]), W([6, 8], [6, 9])),
+  });
+  const supply6 = { comps: [C('battery', 2, 5, { rot: 1, value: 6 })], wires: W([2, 4], [2, 1]).concat(W([2, 6], [2, 9])) };
   const EXAMPLES = {
     'one-lamp': { comps: [C('cell', 9, 8), C('lamp', 9, 3)], wires: loop },
     'switch-lamp': {
       comps: [C('cell', 7, 8), C('switch', 11, 8, { closed: true }), C('lamp', 9, 3)],
       wires: [W([6, 8], [4, 8], [4, 3], [8, 3]), W([8, 8], [10, 8]), W([12, 8], [14, 8], [14, 3], [10, 3])].flat(),
     },
-    series: {
-      comps: [C('cell', 9, 8), C('lamp', 7, 3), C('lamp', 11, 3)],
-      wires: [W([8, 8], [4, 8], [4, 3], [6, 3]), W([8, 3], [10, 3]), W([10, 8], [14, 8], [14, 3], [12, 3])].flat(),
-    },
-    parallel: {
-      comps: [C('cell', 9, 9), C('lamp', 9, 2), C('lamp', 9, 5)],
-      wires: [W([8, 9], [5, 9], [5, 2], [8, 2]), W([5, 5], [8, 5]), W([10, 9], [13, 9], [13, 2], [10, 2]),
-        W([10, 5], [13, 5])].flat(),
-    },
+    series: { comps: [C('cell', 9, 8), C('lamp', 7, 3), C('lamp', 11, 3)], wires: seriesWires },
+    parallel: { comps: [C('cell', 9, 9), C('lamp', 9, 2), C('lamp', 9, 5)], wires: parallelWires },
     voltage: {
       comps: [C('cell', 9, 8), C('lamp', 9, 3), C('voltmeter', 9, 1)],
       wires: loop.concat(W([8, 1], [7, 1], [7, 3]), W([10, 1], [11, 1], [11, 3])),
     },
     'current-split': ladder('ammeter', 'ammeter'),
     'two-switches': ladder('switch', null),
+
+    'series-resistance': { comps: [C('ohmmeter', 9, 8), C('resistor', 7, 3), C('resistor', 11, 3)], wires: seriesWires },
+    'parallel-resistance': { comps: [C('ohmmeter', 9, 9), C('resistor', 9, 2), C('resistor', 9, 5)], wires: parallelWires },
+    'fuse-blows': {
+      comps: [C('battery', 7, 8, { value: 6 }), C('fuse', 11, 8), C('lamp', 9, 3)],
+      wires: [W([6, 8], [4, 8], [4, 3], [8, 3]), W([8, 8], [10, 8]), W([12, 8], [14, 8], [14, 3], [10, 3]),
+        W([8, 3], [8, 1], [10, 1], [10, 3])].flat(),
+    },
+    divider: {
+      comps: [C('battery', 9, 8, { value: 6 }), C('resistor', 7, 3, { value: 10 }), C('resistor', 11, 3, { value: 20 }),
+        C('voltmeter', 11, 1)],
+      wires: seriesWires.concat(W([10, 1], [10, 3]), W([12, 1], [12, 3])),
+    },
+    'ldr-dark': {
+      comps: [C('battery', 9, 8, { value: 6 }), C('resistor', 7, 3, { value: 1000 }), C('ldr', 11, 3), C('voltmeter', 11, 1)],
+      wires: seriesWires.concat(W([10, 1], [10, 3]), W([12, 1], [12, 3])),
+    },
+    'dark-switch': switching(C('resistor', 6, 3, { rot: 1, value: 2200 }), C('ldr', 6, 7, { rot: 1 }), 'npn',
+      C('led', 12, 2, { rot: 1 }), true, supply6),
+    'hot-switch': switching(C('thermistor', 6, 3, { rot: 1 }), C('resistor', 6, 7, { rot: 1, value: 1000 }), 'mosfet',
+      C('motor', 12, 2, { rot: 1 }), false, supply6),
+    delay: switching(C('resistor', 6, 3, { rot: 1, value: 10000 }), C('capacitor', 6, 7, { rot: 1 }), 'npn',
+      C('led', 12, 2, { rot: 1 }), true, {
+        comps: [C('switch', 2, 3, { rot: 1 }), C('battery', 2, 7, { rot: 1, value: 6 })],
+        wires: W([2, 2], [2, 1]).concat(W([2, 4], [2, 6]), W([2, 8], [2, 9])),
+      }),
   };
 
   // ---------- Elements ----------
@@ -449,29 +659,101 @@
   ghost.hidden = true;
   document.body.append(ghost);
 
+  // Value controls in the pop-up: a list for fixed values, a slider for the variable resistor
+  const pick = document.createElement('select');
+  pick.className = 'cb-pick';
+  pick.setAttribute('aria-label', 'Value');
+  pick.hidden = true;
+  const slide = document.createElement('input');
+  slide.type = 'range';
+  slide.className = 'cb-slide';
+  slide.setAttribute('aria-label', 'Resistance');
+  slide.hidden = true;
+  pop.prepend(pick, slide);
+
+  // Light, Temperature and Sound sliders, only for components this page's palette has
+  const palette = new Set([...root.querySelectorAll('.cb-palette [data-type]')].map((b) => b.dataset.type));
+  const ENV = [
+    { key: 'light', label: 'Light', types: ['ldr', 'solar-cell'],
+      show: (v) => (v < 20 ? 'Dark' : v < 50 ? 'Dim' : v < 80 ? 'Bright' : 'Very bright') },
+    { key: 'temp', label: 'Temperature', types: ['thermistor'], show: (v) => v + ' °C' },
+    { key: 'sound', label: 'Sound', types: ['microphone'], show: (v) => (v === 0 ? 'Silent' : v < 50 ? 'Quiet' : 'Loud') },
+  ].filter((s) => s.types.some((t) => palette.has(t)));
+  const envBox = document.createElement('div');
+  envBox.className = 'cb-env';
+  ENV.forEach((s) => {
+    const label = document.createElement('label');
+    label.className = 'cb-env-item';
+    label.hidden = true;
+    label.innerHTML = `<span>${s.label}</span><input type="range" min="0" max="100" step="1"><output></output>`;
+    const input = label.querySelector('input');
+    const out = label.querySelector('output');
+    s.sync = () => { input.value = env[s.key]; out.textContent = s.show(env[s.key]); };
+    input.addEventListener('input', () => {
+      env[s.key] = +input.value;
+      out.textContent = s.show(env[s.key]);
+      save();
+      update();
+    });
+    s.item = label;
+    s.sync();
+    envBox.append(label);
+  });
+  if (ENV.length) root.querySelector('.cb-bar').after(envBox);
+
   const DEFAULT_MSG = 'Drag a component onto the grid. To add a wire, drag from the end of a component.';
   function say(msg) { status.textContent = msg || DEFAULT_MSG; }
 
   // ---------- Drawing ----------
-  function symbolSvg(c, x, y) {
+  const K = S / 30;   // symbol units to SVG units
+
+  // The transform that puts a component's own drawing (centred on 0, 0) in place
+  const placeTf = (c) => `translate(${at(c.x)} ${at(c.y)}) rotate(${c.rot * 90})${c.flip ? ' scale(-1 1)' : ''}`;
+
+  function symbolId(c, res) {
     const t = TYPES[c.type];
-    const id = c.type === 'switch' ? (c.closed ? 'switch-closed' : 'switch-open') : t.letter ? 'ring' : c.type;
-    let s = `<use href="#sym-${id}" x="${x - S}" y="${y - (2 * S) / 3}" width="${2 * S}" height="${(4 * S) / 3}"` +
-      ` transform="rotate(${c.rot * 90} ${x} ${y})"/>`;
-    if (t.letter) s += `<text class="cb-letter" x="${x}" y="${y + 7.3}" text-anchor="middle">${t.letter}</text>`;
+    if (c.type === 'switch') return c.closed ? 'switch-closed' : 'switch-open';
+    if (c.type === 'fuse') return c.blown ? 'fuse-blown' : 'fuse';
+    if (c.type === 'relay') {
+      const contacts = res.parts.has(c.id) && res.parts.get(c.id)[1];
+      return contacts && contacts.on ? 'relay-closed' : 'relay-open';
+    }
+    return t.letter ? 'ring' : c.type;
+  }
+
+  function symbolSvg(c, res) {
+    const g = geom(c);
+    const [bx, by, bw, bh] = g.box;
+    let s = `<use href="#sym-${symbolId(c, res)}" x="${(bx - g.anchor[0]) * K}" y="${(by - g.anchor[1]) * K}"` +
+      ` width="${bw * K}" height="${bh * K}" transform="${placeTf(c)}"/>`;
+    const t = TYPES[c.type];
+    if (t.letter) s += `<text class="cb-letter" x="${at(c.x)}" y="${at(c.y) + 7.3}" text-anchor="middle">${t.letter}</text>`;
     return s;
   }
 
-  const fmt = (v, unit) => {
+  const num = (a) => (a >= 100 ? a.toFixed(0) : a >= 10 ? a.toFixed(1) : a.toFixed(2));
+  function fmt(v, unit) {
     const a = Math.abs(v);
+    if (PREFIX && unit === 'A' && a < 0.1) return num(a * 1000) + ' mA';
     return (a >= 100 ? a.toFixed(0) : a.toFixed(2)) + ' ' + unit;
-  };
+  }
+  function fmtR(R) { return PREFIX && R >= 1000 ? num(R / 1000) + ' kΩ' : num(R) + ' Ω'; }
+  // A component's set value, for its label and the pop-up list
+  function fmtVal(type, v) {
+    const unit = TYPES[type].unit;
+    if (unit === 'Ω' && v >= 1000) return v / 1000 + ' kΩ';
+    return v + ' ' + unit;
+  }
+  const labelled = (c) => c.type === 'resistor' || c.type === 'variable-resistor' || ADJUST.has(c.type);
 
   // A rounded box around a component, lined up with it
-  const outline = (c, cls) =>
-    `<rect class="${cls}" x="${at(c.x) - S - 6}" y="${at(c.y) - S * 0.6}" width="${2 * S + 12}" height="${S * 1.2}"` +
-    ` rx="10" transform="rotate(${c.rot * 90} ${at(c.x)} ${at(c.y)})"/>`;
+  function outline(c, cls) {
+    const [x0, y0, x1, y1] = geom(c).sel;
+    return `<rect class="${cls}" x="${x0 * S}" y="${y0 * S}" width="${(x1 - x0) * S}" height="${(y1 - y0) * S}"` +
+      ` rx="10" transform="${placeTf(c)}"/>`;
+  }
 
+  let shownNotes = '';
   function draw() {
     const st = clone(state);
     let bad = null;
@@ -489,7 +771,8 @@
 
     const res = solve(st);
     const flows = wireFlows(st, res);
-    const shorted = res.els.filter((el) => TYPES[el.c.type].emf && Math.abs(el.I) > SHORT);
+    const shorted = res.els.filter((el) =>
+      (el.c.type === 'cell' || el.c.type === 'battery') && Math.abs(el.I) > val(el.c) / SHORT_R);
 
     let glow = '', wires = '', flow = '', comps = '', dots = '', marks = '', labels = '', over = '';
 
@@ -518,12 +801,12 @@
     const degree = new Map();
     const bump = (k) => degree.set(k, (degree.get(k) || 0) + 1);
     st.wires.forEach((e) => e.split('|').forEach(bump));
-    st.comps.forEach((c) => ends2(c).forEach((p) => bump(pk(...p))));
+    st.comps.forEach((c) => pinsOf(c).forEach((p) => bump(pk(...p))));
     degree.forEach((d, k) => {
       const [x, y] = unpk(k);
       if (d >= 3) dots += `<circle class="cb-junction" cx="${at(x)}" cy="${at(y)}" r="6"/>`;
       // A loose end: show a hollow ring to invite a wire
-      else if (d === 1 && st.comps.some((c) => ends2(c).some((p) => pk(...p) === k))) {
+      else if (d === 1 && st.comps.some((c) => pinsOf(c).some((p) => pk(...p) === k))) {
         marks += `<circle class="cb-end" cx="${at(x)}" cy="${at(y)}" r="7"/>`;
       }
     });
@@ -553,7 +836,12 @@
       if (c.type === 'motor' && I > WORKING && showFlow) {
         s += `<circle class="cb-spin" data-speed="${Math.min(200, 160 * I)}" data-period="14.45" cx="${x}" cy="${y}" r="23"/>`;
       }
-      s += symbolSvg(c, x, y) + '</g>';
+      // Sound waves coming out of the cone
+      if (c.type === 'loudspeaker' && I > 0.005) {
+        s += `<path class="cb-sound" d="M-12 -34Q0 -40 12 -34M-20 -42Q0 -51 20 -42" opacity="${Math.min(1, 0.3 + I / 0.03).toFixed(2)}"` +
+          ` transform="${placeTf(c)}"/>`;
+      }
+      s += symbolSvg(c, res) + '</g>';
 
       // Readings
       const vertical = c.rot % 2 === 1;
@@ -564,7 +852,12 @@
         `<text x="${lx}" y="${ly + 6.5}" text-anchor="middle">${text}</text></g>`;
       if (el && c.type === 'ammeter') labels += pill(fmt(el.I, 'A'));
       if (el && c.type === 'voltmeter') labels += pill(fmt(el.V, 'V'));
-      if (c.type === 'resistor') labels += `<text class="cb-value" x="${lx}" y="${ly + 6}" text-anchor="middle">10 Ω</text>`;
+      if (el && c.type === 'ohmmeter' && res.ohm.has(c.id)) labels += pill(res.ohm.get(c.id).show);
+      // Set values: above a component, or starting just to the right of an upright one
+      if (labelled(c)) {
+        labels += `<text class="cb-value" x="${vertical ? x + S * 0.6 : x}" y="${ly + 6}"` +
+          ` text-anchor="${vertical ? 'start' : 'middle'}">${fmtVal(c.type, val(c))}</text>`;
+      }
       return s;
     };
     st.comps.forEach((c) => { comps += comp(c); });
@@ -579,8 +872,30 @@
     movers = [...layer.querySelectorAll('[data-speed]')];
     if (movers.length) startAnimation();
 
-    warning.hidden = shorted.length === 0;
+    // Warnings, changed only when they change (the box is read out by screen readers)
+    const notes = [];
+    if (shorted.length) {
+      notes.push('<strong>Short circuit!</strong> The current has a path with almost no resistance, so it is far' +
+        ' too big. A real cell would get hot and go flat quickly.');
+    }
+    if ([...res.ohm.values()].some((o) => o.error)) {
+      notes.push('<strong>The ohmmeter can’t measure.</strong> An ohmmeter only works with no supply connected.' +
+        ' Take the cell or battery out of that part of the circuit.');
+    }
+    if (st.comps.some((c) => c.type === 'fuse' && c.blown)) {
+      notes.push('<strong>Fuse blown.</strong> The current was bigger than the fuse rating, so the wire inside it' +
+        ' melted and broke the circuit. Fix the fault, then tap the fuse to replace it.');
+    }
+    const html = notes.map((t) => `<span>${t}</span>`).join(' ');
+    if (html !== shownNotes) {
+      shownNotes = html;
+      warning.innerHTML = html;
+      warning.hidden = !notes.length;
+    }
+    ENV.forEach((s) => { s.item.hidden =!st.comps.some((c) => s.types.includes(c.type)); });
+
     placePop();
+    if (wantsTick(res)) startTick();
     return res;
   }
 
@@ -604,6 +919,22 @@
     requestAnimationFrame(frame);
   }
 
+  // ---------- Time: capacitors charging, microphone AC ----------
+  let tickTimer = null;
+  function wantsTick(res) {
+    return res.els.some((el) => el.c.type === 'capacitor' && Math.abs(el.I) > 1e-5) ||
+      (env.sound > 0 && state.comps.some((c) => c.type === 'microphone'));
+  }
+  function startTick() {
+    if (!tickTimer) tickTimer = setTimeout(tick, DT * 1000);
+  }
+  function tick() {
+    tickTimer = null;
+    clock += DT;
+    solve(state).els.forEach((el) => { if (el.c.type === 'capacitor') capV.set(el.c.id, el.V); });
+    if (preview) draw(); else update();
+  }
+
   function svgPoint(x, y) {
     const p = board.createSVGPoint();
     p.x = x;
@@ -611,12 +942,16 @@
     return p;
   }
 
-  // ---------- Selection pop-up (Turn, Delete) ----------
+  // ---------- Selection pop-up (Turn, Delete, value) ----------
   function placePop() {
     let target = null;
     if (sel && sel.comp) {
       const c = state.comps.find((c2) => c2.id === sel.comp);
-      if (c && !drag) target = { x: at(c.x), y: at(c.y), r: c.rot % 2 ? S * 1.2 : S * 0.75, comp: c };
+      if (c && !drag) {
+        const [x0, y0, x1, y1] = geom(c).sel;
+        const half = c.rot % 2 ? Math.max(-x0, x1) : Math.max(-y0, y1);
+        target = { x: at(c.x), y: at(c.y), r: (half + 0.15) * S, comp: c };
+      }
     } else if (sel && sel.wire && !drag) {
       const pts = [...sel.wire].flatMap(ends);
       const xs = pts.map((p) => at(p[0])), ys = pts.map((p) => at(p[1]));
@@ -624,7 +959,26 @@
     }
     pop.hidden = !target;
     if (!target) return;
-    pop.querySelector('[data-act="turn"]').hidden = !target.comp;
+    const c = target.comp;
+    const turn = pop.querySelector('[data-act="turn"]');
+    turn.hidden = !c;
+    if (c) turn.textContent = geom(c).flips ? 'Flip' : 'Turn';
+    const t = c && TYPES[c.type];
+    pick.hidden = !(t && t.choices && ADJUST.has(c.type));
+    if (!pick.hidden) {
+      if (pick.dataset.type !== c.type) {
+        pick.dataset.type = c.type;
+        pick.innerHTML = t.choices.map((v) => `<option value="${v}">${fmtVal(c.type, v)}</option>`).join('');
+      }
+      pick.value = String(val(c));
+    }
+    slide.hidden = !(t && t.slider);
+    if (!slide.hidden && !sliding) {
+      slide.min = '0';
+      slide.max = String(t.slider.length - 1);
+      const i = t.slider.indexOf(val(c));
+      slide.value = String(i < 0 ? t.slider.length - 1 : i);
+    }
     const m = board.getScreenCTM();
     const box = stage.getBoundingClientRect();
     const p = svgPoint(target.x, target.y).matrixTransform(m);
@@ -637,6 +991,8 @@
     pop.style.top = top + 'px';
   }
 
+  const selected = () => sel && sel.comp && state.comps.find((c2) => c2.id === sel.comp);
+
   pop.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-act]');
     if (!btn || !sel) return;
@@ -648,14 +1004,38 @@
       update();
     }
     if (btn.dataset.act === 'turn') {
-      const c = state.comps.find((c2) => c2.id === sel.comp);
-      for (let k = 1; k <= 3; k++) {
-        const t = Object.assign({}, c, { rot: (c.rot + k) % 4 });
-        if (canPlace(state, t)) { commit(() => { c.rot = t.rot; }); return; }
+      const c = selected();
+      const tries = geom(c).flips ? [{ flip: !c.flip }] : [1, 2, 3].map((k) => ({ rot: (c.rot + k) % 4 }));
+      for (const change of tries) {
+        const t = Object.assign({}, c, change);
+        if (canPlace(state, t)) { commit(() => { Object.assign(c, change); }); return; }
       }
       say('There is no room to turn it here. Move it somewhere with more space first.');
     }
   });
+
+  pick.addEventListener('change', () => {
+    const c = selected();
+    if (!c) return;
+    commit(() => { c.value = +pick.value; });
+    say(TYPES[c.type].name + ' set to ' + fmtVal(c.type, c.value) + '.');
+  });
+
+  // The slider changes the circuit as it moves; Undo takes it back to where the slide started
+  let sliding = false;
+  slide.addEventListener('input', () => {
+    const c = selected();
+    if (!c) return;
+    if (!sliding) {
+      history.push(clone(state));
+      sliding = true;
+    }
+    c.value = TYPES[c.type].slider[+slide.value];
+    say(TYPES[c.type].name + ' set to ' + fmtVal(c.type, c.value) + '.');
+    save();
+    update();
+  });
+  slide.addEventListener('change', () => { sliding = false; });
 
   // ---------- Board pointer handling ----------
   function gridAt(e) {
@@ -669,8 +1049,8 @@
     const r = board.getBoundingClientRect();
     return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
   };
-  const compAt = (x, y) => state.comps.find((c) => c.x === x && c.y === y);
-  const isEnd = (x, y) => state.comps.some((c) => ends2(c).some((p) => p[0] === x && p[1] === y));
+  const compAt = (x, y) => state.comps.find((c) => has(bodyOf(c), [x, y]));
+  const isEnd = (x, y) => state.comps.some((c) => has(pinsOf(c), [x, y]));
 
   // The wire nearest a point, if the finger is on one
   function wireNear(fx, fy) {
@@ -709,6 +1089,14 @@
     commit(() => { state.wires = [...new Set(state.wires.concat(edges))]; });
   }
 
+  function selectMsg(c) {
+    const name = TYPES[c.type].name;
+    if (TYPES[c.type].slider) return name + ' selected. Use the slider to change its resistance.';
+    if (TYPES[c.type].choices && ADJUST.has(c.type)) return name + ' selected. Choose its value, drag it to move it, or use Turn or Delete.';
+    if (geom(c).flips) return name + ' selected. Drag it to move it, or use Flip or Delete.';
+    return name + ' selected. Drag it to move it, or use Turn or Delete.';
+  }
+
   function tap(g) {
     const c = compAt(g.x, g.y);
     if (c) {
@@ -717,12 +1105,16 @@
         commit(() => { c.closed = !c.closed; });
         sel = { comp: c.id };
         say(c.closed ? 'Switch closed: the gap is joined, so current can flow.' : 'Switch open: there is a gap, so no current can flow through it.');
+      } else if (c.type === 'fuse' && c.blown) {
+        sel = { comp: c.id };
+        say('New fuse fitted.');
+        commit(() => { c.blown = false; });
       } else if (sel && sel.comp === c.id) {
         sel = null;
         say();
       } else {
         sel = { comp: c.id };
-        say(TYPES[c.type].name + ' selected. Drag it to move it, or use Turn or Delete.');
+        say(selectMsg(c));
       }
       draw();
       return;
@@ -840,7 +1232,7 @@
     for (let y = 1; y < ROWS - 1; y++) for (let x = 1; x < COLS - 1; x++) spots.push([x, y]);
     spots.sort((a, b) => Math.hypot(a[0] - 9, (a[1] - 5) * 1.6) - Math.hypot(b[0] - 9, (b[1] - 5) * 1.6));
     for (const [x, y] of spots) {
-      const c = { id: 'new', type, x, y, rot: 0, closed: false };
+      const c = newComp(type, x, y);
       // Leave a gap round it so it doesn't touch anything by accident
       const clear = state.comps.every((o) => Math.abs(o.x - x) + Math.abs(o.y - y) >= 4) &&
         !state.wires.some((e) => ends(e).some((p) => Math.abs(p[0] - x) <= 1 && Math.abs(p[1] - y) <= 1));
@@ -848,7 +1240,7 @@
     }
     // Crowded grid: settle for any space it fits
     for (const [x, y] of spots) {
-      const c = { id: 'new', type, x, y, rot: 0, closed: false };
+      const c = newComp(type, x, y);
       if (canPlace(state, c)) return c;
     }
     return null;
@@ -896,8 +1288,7 @@
       const key = g.x + ',' + g.y;
       if (key === p.last) return;
       p.last = key;
-      const c = { id: 'new', type, x: g.x, y: g.y, rot: 0, closed: false };
-      preview = placement(state, c);
+      preview = placement(state, newComp(type, g.x, g.y));
       say(preview.cut ? SPLICE_MSG : '');
       draw();
     });
@@ -927,14 +1318,16 @@
       if (sel && sel.wire) {
         // Tap fallback for dropping onto a wire: put it into the selected wire, near its middle
         const pts = [...new Set([...sel.wire].flatMap((e) => e.split('|')))].map(unpk);
-        const mx = pts.reduce((s, p) => s + p[0], 0) / pts.length;
-        const my = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+        const mx = pts.reduce((s, p2) => s + p2[0], 0) / pts.length;
+        const my = pts.reduce((s, p2) => s + p2[1], 0) / pts.length;
         pts.sort((a, b) => Math.hypot(a[0] - mx, a[1] - my) - Math.hypot(b[0] - mx, b[1] - my));
         for (const [x, y] of pts) {
-          const s = spliceInto(state, { id: 'new', type, x, y, rot: 0, closed: false });
+          const s = spliceInto(state, newComp(type, x, y));
           if (s) { addComp(s.comp, s.cut); say(TYPES[type].name + ' joined into the wire.'); return; }
         }
-        say('That wire is too short to fit a component. It needs a straight part at least two squares long.');
+        say(geom(newComp(type, 0, 0)) === GEOMS.two
+          ? 'That wire is too short to fit a component. It needs a straight part at least two squares long.'
+          : 'That component can’t be dropped into a wire. Put it on the grid and join wires to it.');
         return;
       }
       const c = freeSpot(type);
@@ -957,6 +1350,7 @@
   root.querySelector('[data-cb="clear"]').addEventListener('click', () => {
     if (!state.comps.length && !state.wires.length) return;
     commit(() => { state.comps = []; state.wires = []; });
+    capV.clear();
     sel = null;
     pending = null;
     say('Grid cleared. Undo brings it back.');
@@ -1039,8 +1433,26 @@
     say('Well done: you have finished ' + names.join(' and ') + '.');
   }
 
+  // A fuse carrying more than its rating melts. The one most over its rating goes first.
+  function blowFuses(res) {
+    for (let round = 0; round < 5; round++) {
+      let worst = null, most = 1;
+      res.els.forEach((el) => {
+        if (el.c.type !== 'fuse' || el.c.blown) return;
+        const over = Math.abs(el.I) / val(el.c);
+        if (over > most) { most = over; worst = el.c.id; }
+      });
+      if (worst == null) return res;
+      state.comps.find((c) => c.id === worst).blown = true;
+      save();
+      say('The fuse has blown: the current was more than its rating, so its wire melted and broke the circuit.');
+      res = draw();
+    }
+    return res;
+  }
+
   function update() {
-    const res = draw();
+    const res = blowFuses(draw());
     checkTasks(res);
   }
 
@@ -1050,6 +1462,9 @@
     resetBtn.addEventListener('click', () => {
       history = [];
       state = { comps: [], wires: [], next: 1 };
+      env = Object.assign({}, ENV_START);
+      ENV.forEach((s) => s.sync());
+      capV.clear();
       solved = new Set();
       task = 0;
       sel = null;

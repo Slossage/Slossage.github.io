@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Circuit builder · National 5 Physics · Sloss Physics</title>
+  <meta name="description" content="N5 Physics tool: build circuits with every component in the N5 course, measure current, voltage and resistance, and test potential dividers and transistor switching circuits.">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/starter.css">
+  <link rel="stylesheet" href="../assets/css/circuit-builder.css">
+  <script src="../assets/js/circuit-symbols.js" defer></script>
+  <script src="../assets/js/starter.js" defer></script>
+  <script src="../assets/js/circuit-builder.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../index.html"><svg viewBox="0 0 34 22" aria-hidden="true"><path d="M2 11Q9.5-3 17 11T32 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Sloss<span>Physics</span></a>
+      <nav class="level-nav" aria-label="Levels">
+        <ul>
+          <li><a data-level="bge" href="../bge/index.html">BGE</a></li>
+          <li><a data-level="n4" href="../n4/index.html">N4</a></li>
+          <li><a data-level="n5" href="index.html" aria-current="true">N5</a></li>
+          <li><a data-level="higher" href="../higher/index.html">Higher</a></li>
+          <li><a data-level="ah" href="../ah/index.html">AH</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap starter" data-level="n5">
+    <ol class="crumbs">
+      <li><a href="../index.html">All levels</a></li>
+      <li><a href="index.html">National 5 Physics</a></li>
+      <li>Tools</li>
+    </ol>
+
+    <p class="spec-ref">N5 · Electricity · Practical electrical and electronic circuits · Ohm's law</p>
+    <h1>Circuit builder</h1>
+    <div class="lisc">
+      <p><strong>LI:</strong> I am learning how to measure and control electrical and electronic circuits.</p>
+      <p><strong>SC:</strong> I can measure resistance with an ohmmeter · I can find the total resistance in series and in parallel · I can use a potential divider · I can use a transistor as a switch.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="timer" data-timer>
+        <select aria-label="Timer length">
+          <option value="5">5 min</option>
+          <option value="8">8 min</option>
+          <option value="10" selected>10 min</option>
+          <option value="15">15 min</option>
+        </select>
+        <output class="timer-display">10:00</output>
+        <button type="button" class="tool" data-timer-toggle>Start</button>
+      </div>
+      <button type="button" class="tool" data-show-answers aria-pressed="false">Show answers</button>
+      <button type="button" class="tool" data-reset>Reset</button>
+    </div>
+
+    <div class="cb" data-circuit-builder data-key="circuit-builder-n5" data-adjust="battery resistor fuse capacitor" data-prefixes>
+      <div class="cb-task-nav">
+        <span class="cb-task-nav-label">Tasks</span>
+        <button type="button" class="tool cb-example" data-cb="example">Build an example</button>
+      </div>
+
+      <div class="q cb-task" data-check="series-resistance">
+        <p class="q-prompt"><span class="q-num">1.</span>Join two 10 Ω resistors in <strong>series</strong>. Use an ohmmeter to measure their total resistance.</p>
+        <details class="hint"><summary>Hint</summary><p>An ohmmeter is used with no cell or battery in the circuit. Join one end of the ohmmeter to each end of the pair of resistors.</p></details>
+        <div class="q-feedback" aria-live="polite"></div>
+        <div class="q-explain">In series the resistances add: <i>R</i><sub>T</sub> = <i>R</i><sub>1</sub> + <i>R</i><sub>2</sub> = 10 + 10 = <strong>20 Ω</strong>. Adding resistors in series always increases the total resistance.</div>
+      </div>
+
+      <div class="q cb-task" data-check="parallel-resistance" hidden>
+        <p class="q-prompt"><span class="q-num">2.</span>Now join two 10 Ω resistors in <strong>parallel</strong> and measure their total resistance. Is it more or less than one resistor on its own?</p>
+        <details class="hint"><summary>Hint</summary><p>Parallel means each resistor has its own branch. Both ends of each resistor are joined to the ohmmeter.</p></details>
+        <div class="q-feedback" aria-live="polite"></div>
+        <div class="q-explain">1/<i>R</i><sub>T</sub> = 1/<i>R</i><sub>1</sub> + 1/<i>R</i><sub>2</sub> = 1/10 + 1/10, so <i>R</i><sub>T</sub> = <strong>5.0 Ω</strong>. Adding a resistor in parallel gives the current another path, so the total resistance goes <strong>down</strong>: it is less than the smallest resistor.</div>
+      </div>
+
+      <div class="q cb-task" data-check="fuse-blows" hidden>
+        <p class="q-prompt"><span class="q-num">3.</span>Build a circuit with a battery, a fuse and a lamp in series. Then add a wire across the lamp to make a short circuit. What happens to the fuse?</p>
+        <details class="hint"><summary>Hint</summary><p>Join the extra wire from one end of the lamp to the other end, so the current can go round the lamp instead of through it.</p></details>
+        <div class="q-feedback" aria-live="polite"></div>
+        <div class="q-explain">The short circuit has almost no resistance, so the current becomes much bigger than the fuse rating. The thin wire in the fuse <strong>melts</strong> and breaks the circuit before the cables can overheat. The fuse protects the wiring, not the person.</div>
+      </div>
+
+      <div class="q cb-task" data-check="divider" hidden>
+        <p class="q-prompt"><span class="q-num">4.</span>Build a potential divider: a 6 V battery with a 10 Ω resistor and a 20 Ω resistor in series. Work out the voltage across the 20 Ω resistor, then check it with a voltmeter.</p>
+        <details class="hint"><summary>Hint</summary><p>Tap a resistor to choose its value. The bigger resistor gets the bigger share of the supply voltage.</p></details>
+        <div class="q-feedback" aria-live="polite"></div>
+        <div class="q-explain"><i>V</i><sub>2</sub> = (<i>R</i><sub>2</sub> / (<i>R</i><sub>1</sub> + <i>R</i><sub>2</sub>)) × <i>V</i><sub>s</sub> = (20 / (10 + 20)) × 6 = <strong>4.0 V</strong>. The 10 Ω resistor gets the other 2.0 V, and 4.0 + 2.0 = 6.0 V, the supply voltage.</div>
+      </div>
+
+      <div class="q cb-task" data-check="ldr-dark" hidden>
+        <p class="q-prompt"><span class="q-num">5.</span>Build a potential divider from a battery, a resistor and an LDR, with a voltmeter across the LDR. Then slide the Light level down to Dark. What happens to the voltmeter reading?</p>
+        <details class="hint"><summary>Hint</summary><p>The Light slider appears once there is an LDR on the grid. Try a 1 kΩ resistor.</p></details>
+        <div class="q-feedback" aria-live="polite"></div>
+        <div class="q-explain">The reading goes <strong>up</strong>. As it gets darker the LDR's resistance increases, so it takes a bigger share of the supply voltage.</div>
+      </div>
+
+      <div class="q cb-task" data-check="dark-switch" hidden>
+        <p class="q-prompt"><span class="q-num">6.</span>Build a circuit that switches an LED on automatically when it gets dark. Use an LDR, a resistor, an npn transistor and an LED.</p>
+        <details class="hint"><summary>Hint</summary><p>The LDR and resistor make a potential divider; join the base to the point between them. The transistor switches on when the voltage across the base and emitter reaches 0.7 V. Put the LED, with a resistor to protect it, between the positive side and the collector. If the LED stays on in the light, use a bigger resistor in the divider.</p></details>
+        <div class="q-feedback" aria-live="polite"></div>
+        <div class="q-explain">The LDR goes between the base and the emitter. In the dark its resistance increases, so the voltage across it rises. Once it reaches 0.7 V the transistor switches on, and current flows through the LED.</div>
+      </div>
+
+      <div class="q cb-task" data-check="hot-switch" hidden>
+        <p class="q-prompt"><span class="q-num">7.</span>Build a circuit that switches on a fan (a motor) when it gets hot. Use a thermistor, a resistor, a MOSFET and a motor. Test it with the Temperature slider.</p>
+        <details class="hint"><summary>Hint</summary><p>When the thermistor gets hot its resistance goes down, so the other part of the divider gets more of the voltage. This MOSFET switches on when the voltage across its gate and source reaches 2.0 V.</p></details>
+        <div class="q-feedback" aria-live="polite"></div>
+        <div class="q-explain">The thermistor goes at the top of the divider and the resistor between the gate and the source. As the temperature rises the thermistor's resistance falls, so the voltage across the resistor rises. At 2.0 V the MOSFET switches on and the motor runs.</div>
+      </div>
+
+      <div class="q cb-task q-challenge" data-check="delay" hidden>
+        <p class="q-prompt"><span class="q-tag">Challenge</span><span class="q-num">8.</span>Build a circuit in which an LED comes on a few seconds <strong>after</strong> you close a switch. You will need a capacitor, a resistor and a transistor.</p>
+        <div class="q-feedback" aria-live="polite"></div>
+        <div class="q-explain">Put the resistor and capacitor in series as a potential divider, with the capacitor between the base and the emitter. When the switch closes the capacitor starts to charge, and the voltage across it rises slowly. Once it reaches the transistor's switching voltage, the LED comes on. A bigger resistor or capacitor gives a longer delay.</div>
+      </div>
+
+      <div class="cb-workspace">
+        <ul class="cb-palette" aria-label="Components">
+          <li><button type="button" data-type="cell"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-cell"/></svg>Cell</button></li>
+          <li><button type="button" data-type="battery" data-value="6"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-battery"/></svg>Battery</button></li>
+          <li><button type="button" data-type="solar-cell"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-solar-cell"/></svg>Solar cell</button></li>
+          <li><button type="button" data-type="switch"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-switch-open"/></svg>Switch</button></li>
+          <li><button type="button" data-type="lamp"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-lamp"/></svg>Lamp</button></li>
+          <li><button type="button" data-type="led"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-led"/></svg>LED</button></li>
+          <li><button type="button" data-type="motor"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-motor"/></svg>Motor</button></li>
+          <li><button type="button" data-type="loudspeaker"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-loudspeaker"/></svg>Loud&shy;speaker</button></li>
+          <li><button type="button" data-type="microphone"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-microphone"/></svg>Micro&shy;phone</button></li>
+          <li><button type="button" data-type="resistor"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-resistor"/></svg>Resistor</button></li>
+          <li><button type="button" data-type="variable-resistor"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-variable-resistor"/></svg>Variable resistor</button></li>
+          <li><button type="button" data-type="ldr"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-ldr"/></svg>LDR</button></li>
+          <li><button type="button" data-type="thermistor"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-thermistor"/></svg>Thermistor</button></li>
+          <li><button type="button" data-type="diode"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-diode"/></svg>Diode</button></li>
+          <li><button type="button" data-type="fuse"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-fuse"/></svg>Fuse</button></li>
+          <li><button type="button" data-type="capacitor"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-capacitor"/></svg>Capacitor</button></li>
+          <li><button type="button" data-type="npn"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#sym-npn"/></svg>npn transistor</button></li>
+          <li><button type="button" data-type="mosfet"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#sym-mosfet"/></svg>MOSFET</button></li>
+          <li><button type="button" data-type="relay"><svg viewBox="0 -15 60 90" aria-hidden="true"><use href="#sym-relay-open"/></svg>Relay</button></li>
+          <li><button type="button" data-type="ammeter"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-ammeter"/></svg>Ammeter</button></li>
+          <li><button type="button" data-type="voltmeter"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-voltmeter"/></svg>Voltmeter</button></li>
+          <li><button type="button" data-type="ohmmeter"><svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-ohmmeter"/></svg>Ohmmeter</button></li>
+        </ul>
+
+        <div class="cb-bar">
+          <p class="cb-status" aria-live="polite"></p>
+          <button type="button" class="tool" data-cb="flow" aria-pressed="true">Show current</button>
+          <button type="button" class="tool" data-cb="undo">Undo</button>
+          <button type="button" class="tool" data-cb="clear">Clear</button>
+          <p class="cb-warning" role="alert" hidden></p>
+        </div>
+
+        <div class="cb-stage">
+          <svg class="cb-board" role="img" aria-label="Circuit building grid"></svg>
+          <div class="cb-pop" hidden>
+            <button type="button" class="tool" data-act="turn">Turn</button>
+            <button type="button" class="tool" data-act="delete">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <ul class="cb-help">
+        <li><strong>Add a component:</strong> drag it onto the grid, or tap it.</li>
+        <li><strong>Put a component into a wire:</strong> drop it onto a straight part of the wire and it joins in. Or tap the wire, then tap the component. Transistors and the relay have more than two connections, so put them on the grid and join wires to them.</li>
+        <li><strong>Add a wire:</strong> drag from the end of a component to where the wire should go. Or tap the end, then tap where it should go.</li>
+        <li><strong>Move, turn or delete:</strong> drag a component to move it. Tap it for Turn and Delete, or drag it off the grid. Transistors have Flip instead of Turn, so the collector (drain) stays at the top.</li>
+        <li><strong>Change a value:</strong> tap a resistor, battery, fuse or capacitor and choose its value. Tap a variable resistor and use its slider.</li>
+        <li><strong>Light, Temperature and Sound:</strong> sliders appear when there is an LDR, solar cell, thermistor or microphone on the grid.</li>
+        <li><strong>Switches and fuses:</strong> tap a switch to open or close it. Tap a blown fuse to fit a new one.</li>
+        <li><strong>Meters:</strong> ammeters go in series and voltmeters in parallel. An ohmmeter only works with no supply connected.</li>
+        <li><strong>The npn transistor</strong> switches on at 0.7 V between its base and emitter; <strong>the MOSFET</strong> at 2.0 V between its gate and source.</li>
+        <li><strong>The moving dots</strong> show the current, from the positive end of the supply (the long line) round to the negative end. Faster dots mean a bigger current.</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">Free for teachers to use. No logins, no tracking.</div>
+  </footer>
+</body>
+</html>
