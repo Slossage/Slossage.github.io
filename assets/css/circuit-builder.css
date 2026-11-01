@@ -4,6 +4,7 @@
   --cb-glow: #facc15;          /* lamp light */
   --cb-led: #f472b6;           /* LED light */
   --cb-flow: #1f4fd1;          /* moving current dots */
+  --cb-heat: #f97316;          /* heating element glowing */
 }
 @media (prefers-color-scheme: dark) {
   :root { --cb-flow: #8fb0ff; }
@@ -205,6 +206,19 @@
 .cb-comp.is-bad { color: var(--bad); opacity: 0.75; }
 .cb-sel { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 7 5; }
 .cb-short { fill: var(--bad-bg); stroke: var(--bad); stroke-width: 3; }
+.cb-lit-heat { fill: var(--cb-heat); opacity: 0.55; }
+
+/* Walkthrough boards: the part being talked about is ringed, the rest fade back */
+.cb-focus { fill: none; stroke: var(--level-colour, var(--accent)); stroke-width: 4; }
+.cb-comp.is-dim { opacity: 0.3; }
+.cb-comp { transition: opacity 0.3s; }
+.cb-terminal { fill: var(--bg); stroke: currentColor; stroke-width: 3; }
+.cb-rail { fill: currentColor; font-size: 23px; font-weight: 700; font-family: var(--font); }
+.cb-note { fill: var(--text); font-size: 21px; font-weight: 700; font-family: var(--font); }
+.cb-note.is-reading { fill: var(--level-colour, var(--accent)); font-size: 23px; }
+.cb-note.is-pin { fill: var(--muted); font-size: 19px; font-style: italic; }
+.cb-note.is-label { fill: var(--muted); font-size: 20px; }
+.cb-guided .cb-value { font-size: 20px; }
 
 .cb-reading rect { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
 .cb-reading text { fill: var(--text); font-size: 19px; font-weight: 700; font-family: var(--font); }
@@ -243,3 +257,239 @@
 
 .cb-help { margin: 16px 0 0; color: var(--muted); font-size: 1rem; }
 .cb-help li + li { margin-top: 4px; }
+
+/* ---------- Walkthroughs (assets/js/circuit-walkthroughs.js) ---------- */
+.wt-section { margin-top: 28px; }
+.wt-section > h2, .cb-build-title { margin: 0 0 6px; font-family: var(--font-head); font-size: 1.6rem; }
+.wt-intro { margin: 0 0 16px; }
+.wt-picker h3 { margin: 18px 0 10px; font-size: 1.15rem; color: var(--muted); }
+.wt-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wt-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  height: 100%;
+  padding: 14px 16px;
+  border: var(--edge-w) solid var(--edge);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--pop);
+  color: var(--text);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.wt-card:active { transform: translate(4px, 4px); box-shadow: none; }
+.wt-card-num {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--level-colour, var(--accent));
+  color: var(--on-level);
+  font-family: var(--font-head);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.wt-card-title { font-weight: 700; font-size: 1.1rem; line-height: 1.25; }
+.wt-card-sub { color: var(--muted); font-size: 0.95rem; line-height: 1.3; }
+/* Finished: says so in words as well as colour */
+.wt-card.is-done { border-color: var(--good); background: var(--good-bg); }
+.wt-card.is-done .wt-card-title::after { content: " (done)"; color: var(--good); font-weight: 600; font-size: 0.9rem; }
+
+.wt-player[hidden], .wt-picker[hidden], .wt[hidden], .wt-step[hidden], .wt-name[hidden] { display: none; }
+.wt-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-bottom: 12px;
+}
+.wt-title { flex: 1 1 260px; margin: 0; font-family: var(--font-head); font-size: 1.4rem; }
+.wt-head .tool { text-decoration: none; }
+.wt-dots { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.wt-dot {
+  min-width: var(--tap);
+  min-height: var(--tap);
+  border: var(--edge-w) solid var(--edge);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.wt-dot[aria-current] { background: var(--level-colour, var(--accent)); border-color: var(--level-colour, var(--accent)); color: var(--on-level); }
+
+.wt-body { display: grid; gap: 16px; }
+.wt-board {
+  padding: 10px;
+  border: var(--edge-w) solid var(--edge);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--pop);
+}
+.cb.cb-guided { margin: 0; }
+/* Nothing to draw on a walkthrough board, so a finger on it scrolls the page as normal */
+.cb-guided .cb-board { touch-action: manipulation; min-height: 0; max-height: 60vh; }
+.cb-guided .cb-paper { fill: var(--surface); }
+.wt-tapinfo {
+  min-height: 3.2em;
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-left: 5px solid var(--level-colour, var(--accent));
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 1rem;
+}
+.wt-tapinfo strong { margin-right: 4px; }
+@media (min-width: 900px) {
+  .wt-body { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); align-items: start; }
+  .wt-board { position: sticky; top: 10px; }
+}
+/* Longer questions: one column, with a smaller circuit above */
+.wt-player.is-wide .wt-body { grid-template-columns: minmax(0, 1fr); }
+.wt-player.is-wide .wt-board { position: static; }
+.wt-player.is-wide .cb-guided .cb-board { max-height: 34vh; }
+/* iPad portrait: the circuit stays in view at the top while the steps scroll underneath */
+@media (max-width: 899px) and (min-height: 700px) {
+  .wt-board { position: sticky; top: 0; z-index: 4; }
+  .cb-guided .cb-board { max-height: 38vh; }
+}
+
+.wt-step h4 { margin: 0 0 8px; font-family: var(--font-head); font-size: 1.25rem; }
+.wt-step > p { margin: 0 0 12px; }
+.wt-step .q { margin-top: 14px; padding: 16px 18px; }
+.wt-step .q-prompt { font-size: 1.15rem; }
+/* The panel is narrow beside the circuit, so longer answers go one per row */
+.wt-step .options:not(.is-row):not(.is-pair) { grid-template-columns: minmax(0, 1fr); }
+.wt-step .option { min-height: 48px; padding: 10px 14px; font-size: 1.05rem; }
+.wt-tip {
+  margin: 12px 0;
+  padding: 12px 16px;
+  border: 2px dashed var(--level-colour, var(--accent));
+  border-radius: 12px;
+}
+.wt-tip p { margin: 0; }
+.wt-tip p + p { margin-top: 6px; }
+.wt-step mark {
+  padding: 0 3px;
+  border-radius: 4px;
+  background: rgba(250, 204, 21, 0.45);
+  color: inherit;
+}
+
+.wt-live { margin-top: 14px; }
+.wt-controls { display: grid; gap: 10px; }
+.wt-controls.is-locked { opacity: 0.5; }
+.wt-controls .tool { justify-self: start; }
+.wt-slider {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0 12px;
+  padding: 8px 14px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+}
+.wt-slider-name { grid-row: 1; grid-column: 1; font-weight: 700; }
+.wt-slider input { grid-column: 1 / -1; grid-row: 2; width: 100%; height: var(--tap); margin: 0; accent-color: var(--level-colour, var(--accent)); touch-action: manipulation; }
+.wt-slider output { grid-row: 1; grid-column: 2; font-weight: 700; color: var(--level-colour, var(--accent)); text-align: right; }
+.wt-slider-ends { grid-column: 1 / -1; display: flex; justify-content: space-between; margin-top: -6px; color: var(--muted); font-size: 0.85rem; }
+.wt-lock { margin: 6px 0 0; color: var(--muted); font-weight: 600; }
+.wt-lock[hidden] { display: none; }
+
+.wt-graph svg { display: block; width: 100%; max-width: 340px; margin: 10px auto 0; }
+.wt-axis { fill: none; stroke: var(--text); stroke-width: 2; }
+.wt-curve { fill: none; stroke: var(--level-colour, var(--accent)); stroke-width: 3.5; }
+.wt-axis-text { fill: var(--muted); font-size: 13px; font-family: var(--font); }
+.wt-axis-title { fill: var(--text); font-size: 14px; font-weight: 700; font-family: var(--font); }
+.wt-dot-now { fill: var(--cb-heat); stroke: var(--text); stroke-width: 2; }
+
+/* The chain: each link lights up when it happens */
+.wt-chain { display: grid; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+.wt-chain.is-arrows { gap: 18px; }
+.wt-link {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  align-items: baseline;
+  padding: 7px 12px;
+  border: var(--edge-w) solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  transition: background 0.3s, border-color 0.3s;
+}
+.wt-link-label { font-weight: 600; }
+.wt-link-value { font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; text-align: right; }
+.wt-trend { color: var(--muted); font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+.wt-link.is-on { border-color: var(--level-colour, var(--accent)); background: var(--surface); box-shadow: 0 0 0 3px var(--level-colour, var(--accent)); }
+.wt-link.is-on .wt-link-value { color: var(--level-colour, var(--accent)); }
+/* A short arrow down to the next link (drawn, not a character) */
+.wt-chain.is-arrows .wt-link + .wt-link::before {
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: -17px;
+  width: 3px;
+  height: 10px;
+  background: var(--muted);
+}
+.wt-chain.is-arrows .wt-link + .wt-link::after {
+  content: "";
+  position: absolute;
+  left: 23.5px;
+  top: -8px;
+  border: 6px solid transparent;
+  border-top: 7px solid var(--muted);
+}
+.wt-meter {
+  position: relative;
+  grid-column: 1 / -1;
+  height: 16px;
+  margin: 4px 0 20px;
+  border: 2px solid var(--text);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.wt-meter-fill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 6px; background: var(--level-colour, var(--accent)); transition: width 0.15s; }
+.wt-meter-mark { position: absolute; top: -6px; bottom: -6px; width: 3px; margin-left: -1.5px; background: var(--bad); }
+.wt-meter-text {
+  position: absolute;
+  top: 18px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  color: var(--bad);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.wt-meter-mark[hidden], .wt-meter-text[hidden] { display: none; }
+.wt-extra { margin: 12px 0 0; padding: 10px 14px; border-radius: 10px; background: var(--bg); }
+.wt-extra:empty { display: none; }
+
+.wt-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 2px solid var(--border);
+}
+.wt-count { color: var(--muted); font-weight: 700; }
+.wt-nav .tool:disabled { opacity: 0.4; }
+.wt-next { background: var(--level-colour, var(--accent)); border-color: var(--level-colour, var(--accent)); color: var(--on-level); }
+
+.cb-build-title { margin-top: 36px; }

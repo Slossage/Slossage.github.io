@@ -11,6 +11,9 @@
 //                target. Give each .match-item a data-label for Show answers.
 //                Add .is-sort to the .match box to sort into groups: several items can share a
 //                target's data-key, and they stack up in its slot.
+//                Add .is-order instead to put sentences in order: the targets are the places
+//                ("1", "2", …, and optionally "Not needed" for wrong sentences, which can share a key),
+//                listed down the page with each slot beside its number.
 //   .q.q-input   type-in number: an <input class="answer"> and a .q-check button; the .q has
 //                data-answer and optional data-tol (fraction allowed either way, default 0.02).
 //                Optional hidden <p class="mistake" data-value="…"> elements give targeted
@@ -121,6 +124,7 @@
     const items = q.querySelectorAll('.match-item');
     const pool = q.querySelector('.match-items');
     const sorting = !!q.querySelector('.match.is-sort');
+    const ordering = !!q.querySelector('.match.is-order');
 
     // Give every target an empty slot above it; a correctly matched item moves into that slot
     q.querySelectorAll('.match-target').forEach((target) => {
@@ -176,7 +180,7 @@
     // Shared by tapping and dragging: true if the item belongs with the target
     function tryMatch(item, target) {
       if (item.dataset.key !== target.dataset.key) {
-        say(q, 'bad', sorting ? 'Not in that group.' : 'Not a match.', 'Try again.');
+        say(q, 'bad', sorting ? 'Not in that group.' : ordering ? 'Not in that place.' : 'Not a match.', 'Try again.');
         return false;
       }
       // When sorting, a group stays open for the rest of its items
@@ -205,9 +209,9 @@
       const left = [...items].filter((b) => !b.disabled).length;
       if (left === 0) {
         solve(q);
-        say(q, 'good', sorting ? 'All sorted!' : 'All matched!', explain ? explain.innerHTML : '');
+        say(q, 'good', sorting ? 'All sorted!' : ordering ? 'All in order!' : 'All matched!', explain ? explain.innerHTML : '');
       } else {
-        say(q, 'good', sorting ? 'Correct!' : 'Match!', left + ' to go.');
+        say(q, 'good', sorting || ordering ? 'Correct!' : 'Match!', left + ' to go.');
       }
       return true;
     }

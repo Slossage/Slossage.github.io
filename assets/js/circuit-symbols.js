@@ -68,6 +68,12 @@
       `<path d="M0 20H22M38 20H60" ${line}/><rect x="22" y="14" width="16" height="12" ${line}/>` +
       `<path d="M22 14L14 2H46L38 14" ${line} stroke-linejoin="round"/>`,
     microphone: `<path d="M0 20H19M41 20H60M19 7V33" ${line}/><circle cx="30" cy="20" r="11" ${line}/>`,
+    // Mains: two open terminals with a wave between them
+    'ac-supply':
+      `<path d="M0 20H13M47 20H60" ${line}/><circle cx="17" cy="20" r="4" ${line}/><circle cx="43" cy="20" r="4" ${line}/>` +
+      `<path d="M23 20Q26.5 12 30 20T37 20" ${line}/>`,
+    // Heating element: a box divided into sections
+    heater: `<path d="M0 20H14M46 20H60M22 12V28M30 12V28M38 12V28" ${line}/><rect x="14" y="12" width="32" height="16" ${line}/>`,
     // Logic gates (American shapes, as SQA uses). Inputs at (0, 12) and (0, 28), output at (60, 20);
     // the NOT gate has its single input at (0, 20).
     'gate-and': `<path d="M0 12H14M0 28H14M44 20H60M14 6H30A14 14 0 0 1 30 34H14Z" ${line} stroke-linejoin="round"/>`,

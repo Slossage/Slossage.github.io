@@ -287,6 +287,15 @@
 .match.is-sort .match-target { order: -1; font-weight: 700; }
 .match-item.is-text { font-size: 1.05rem; }
 
+/* Putting sentences in order (.match.is-order): one row per place, its number on the left */
+.match.is-order .match-items { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.match.is-order .match-targets { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.match.is-order .match-item { justify-content: flex-start; align-items: flex-start; text-align: left; }
+.match.is-order .match-col { grid-template-columns: 6.2em minmax(0, 1fr); align-items: stretch; }
+.match.is-order .match-target { order: -1; padding: 8px; font-size: 1rem; font-weight: 700; }
+.match.is-order .match-slot { flex-direction: column; gap: 8px; min-height: 60px; padding: 4px; }
+.match.is-order .match-slot .match-item { flex: none; min-height: 48px; text-align: left; align-items: flex-start; }
+
 /* Type-in answers (.q-input) */
 .answer-row {
   display: flex;
