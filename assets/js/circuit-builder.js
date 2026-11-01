@@ -115,6 +115,31 @@
     return !st.wires.some((e) => e.split('|').includes(mid));
   }
 
+  // Dropped onto a straight bit of wire: the component takes the place of the two edges under
+  // it, turned to line up with the wire, so it is joined in without rewiring.
+  // Returns { comp, cut } or null if it doesn't fit there.
+  function spliceInto(st, c) {
+    const mid = pk(c.x, c.y);
+    const touching = st.wires.filter((e) => e.split('|').includes(mid));
+    if (touching.length !== 2) return null;   // no wire here, a corner end, or a junction
+    for (const rot of [c.rot, (c.rot + 1) % 4]) {
+      const t = Object.assign({}, c, { rot });
+      const cut = ends2(t).map(([x, y]) => ek(x, y, c.x, c.y));
+      if (!cut.every((e) => touching.includes(e))) continue;
+      const rest = Object.assign({}, st, { wires: st.wires.filter((e) => !cut.includes(e)) });
+      if (canPlace(rest, t)) return { comp: t, cut };
+    }
+    return null;
+  }
+
+  // Where a dragged component would go: a clear spot, or spliced into a wire
+  function placement(st, c) {
+    if (canPlace(st, c)) return { comp: c, bad: false };
+    const s = spliceInto(st, c);
+    return s ? { comp: s.comp, cut: s.cut, bad: false } : { comp: c, bad: true };
+  }
+  const SPLICE_MSG = 'Let go to join it into the wire.';
+
   // Edges along a path that goes straight, or turns one right-angled corner
   function route(p, q, horizontalFirst) {
     const corner = horizontalFirst ? [q[0], p[1]] : [p[0], q[1]];
@@ -455,6 +480,7 @@
       const i = st.comps.findIndex((c) => c.id === preview.comp.id);
       if (i >= 0) st.comps.splice(i, 1);
       if (preview.bad) bad = preview.comp; else st.comps.push(preview.comp);
+      if (preview.cut) st.wires = st.wires.filter((e) => !preview.cut.includes(e));
     }
     if (preview && preview.wire) {
       if (preview.bad) extraWire = preview.wire;
@@ -719,7 +745,7 @@
     }
     if (w) {
       sel = { wire: wireRun(w) };
-      say('Wire selected. Use Delete to remove it.');
+      say('Wire selected. Tap a component to join it into this wire, or use Delete.');
     } else {
       sel = null;
       say();
@@ -752,8 +778,8 @@
       const key = drag.off ? 'off' : moved.x + ',' + moved.y;
       if (key === drag.last) return;
       drag.last = key;
-      preview = drag.off ? { comp: c, bad: true } : { comp: moved, bad: !canPlace(state, moved) };
-      say(drag.off ? 'Let go here to remove it.' : '');
+      preview = drag.off ? { comp: c, bad: true } : placement(state, moved);
+      say(drag.off ? 'Let go here to remove it.' : preview.cut ? SPLICE_MSG : '');
       draw();
       return;
     }
@@ -787,9 +813,12 @@
         sel = null;
         say('Removed.');
       } else if (!pv.bad) {
-        commit(() => { Object.assign(d.comp, { x: pv.comp.x, y: pv.comp.y }); });
+        commit(() => {
+          Object.assign(d.comp, { x: pv.comp.x, y: pv.comp.y, rot: pv.comp.rot });
+          if (pv.cut) state.wires = state.wires.filter((e) => !pv.cut.includes(e));
+        });
         sel = { comp: d.comp.id };
-        say();
+        say(pv.cut ? TYPES[d.comp.type].name + ' joined into the wire.' : '');
       } else {
         say('It can’t go there: it would sit on top of something. Try a clear spot.');
       }
@@ -825,11 +854,12 @@
     return null;
   }
 
-  function addComp(c) {
+  function addComp(c, cut) {
     const id = state.next;
     commit(() => {
       state.next += 1;
       state.comps.push(Object.assign({}, c, { id }));
+      if (cut) state.wires = state.wires.filter((e) => !cut.includes(e));
     });
     sel = { comp: id };
     pending = null;
@@ -867,7 +897,8 @@
       if (key === p.last) return;
       p.last = key;
       const c = { id: 'new', type, x: g.x, y: g.y, rot: 0, closed: false };
-      preview = { comp: c, bad: !canPlace(state, c) };
+      preview = placement(state, c);
+      say(preview.cut ? SPLICE_MSG : '');
       draw();
     });
     const end = (e) => {
@@ -880,7 +911,10 @@
       setTimeout(() => { dragged = false; }, 0);
       const pv = preview;
       preview = null;
-      if (e.type === 'pointerup' && pv && !pv.bad) { addComp(pv.comp); say(); }
+      if (e.type === 'pointerup' && pv && !pv.bad) {
+        addComp(pv.comp, pv.cut);
+        say(pv.cut ? TYPES[type].name + ' joined into the wire.' : '');
+      }
       else {
         if (pv) say('It can’t go there: it would sit on top of something. Try a clear spot.');
         draw();
@@ -890,6 +924,19 @@
     btn.addEventListener('pointercancel', end);
     btn.addEventListener('click', () => {
       if (dragged) return;
+      if (sel && sel.wire) {
+        // Tap fallback for dropping onto a wire: put it into the selected wire, near its middle
+        const pts = [...new Set([...sel.wire].flatMap((e) => e.split('|')))].map(unpk);
+        const mx = pts.reduce((s, p) => s + p[0], 0) / pts.length;
+        const my = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+        pts.sort((a, b) => Math.hypot(a[0] - mx, a[1] - my) - Math.hypot(b[0] - mx, b[1] - my));
+        for (const [x, y] of pts) {
+          const s = spliceInto(state, { id: 'new', type, x, y, rot: 0, closed: false });
+          if (s) { addComp(s.comp, s.cut); say(TYPES[type].name + ' joined into the wire.'); return; }
+        }
+        say('That wire is too short to fit a component. It needs a straight part at least two squares long.');
+        return;
+      }
       const c = freeSpot(type);
       if (!c) { say('The grid is full. Remove something first.'); return; }
       addComp(c);
