@@ -2,7 +2,7 @@
 // run along the grid (so every corner is a right angle), and see what happens: lamps light,
 // meters give readings, and moving dots show the current splitting at junctions.
 //
-// Markup (see starters/bge/electricity-circuit-builder.html):
+// Markup (see bge/circuit-builder.html):
 //   [data-circuit-builder]   wrapper for one builder
 //     .cb-task[data-check]   one task each; the builder ticks it off when the circuit does the job.
 //                            Each has a .q-feedback, an optional .hint and a .q-explain (the answer).

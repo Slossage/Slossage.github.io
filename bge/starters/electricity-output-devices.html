@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Output devices · BGE · Sloss Physics</title>
+  <meta name="description" content="BGE Fourth level starter (SCN 4-09b): output devices and what they give out, using an LED safely with a resistor, and what a relay does.">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <link rel="stylesheet" href="../../assets/css/starter.css">
+  <script src="../../assets/js/circuit-symbols.js" defer></script>
+  <script src="../../assets/js/starter.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../../index.html"><svg viewBox="0 0 34 22" aria-hidden="true"><path d="M2 11Q9.5-3 17 11T32 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Sloss<span>Physics</span></a>
+      <nav class="level-nav" aria-label="Levels">
+        <ul>
+          <li><a data-level="bge" href="../index.html" aria-current="true">BGE</a></li>
+          <li><a data-level="n4" href="../../n4/index.html">N4</a></li>
+          <li><a data-level="n5" href="../../n5/index.html">N5</a></li>
+          <li><a data-level="higher" href="../../higher/index.html">Higher</a></li>
+          <li><a data-level="ah" href="../../ah/index.html">AH</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap starter" data-level="bge">
+    <ol class="crumbs">
+      <li><a href="../../index.html">All levels</a></li>
+      <li><a href="../index.html">BGE Science</a></li>
+      <li><a href="index.html">Starters</a></li>
+      <li>Forces, electricity and waves</li>
+    </ol>
+
+    <p class="spec-ref">BGE · Fourth level · Forces, electricity and waves · SCN 4-09b</p>
+    <h1>Output devices</h1>
+    <div class="lisc">
+      <p><strong>LI:</strong> I am learning how output devices work and how to use them safely in a circuit.</p>
+      <p><strong>SC:</strong> I can say what different output devices give out · I can explain why an LED needs a resistor · I can describe what a relay does.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="timer" data-timer>
+        <select aria-label="Timer length">
+          <option value="3">3 min</option>
+          <option value="5" selected>5 min</option>
+          <option value="8">8 min</option>
+          <option value="10">10 min</option>
+        </select>
+        <output class="timer-display">5:00</output>
+        <button type="button" class="tool" data-timer-toggle>Start</button>
+      </div>
+      <button type="button" class="tool" data-show-answers aria-pressed="false">Show answers</button>
+      <button type="button" class="tool" data-reset>Reset</button>
+    </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">1.</span>Sort these output devices by what they give out.</p>
+        <div class="match is-sort">
+          <p class="match-hint">Drag each one into its group, or tap it and then the group.</p>
+          <div class="match-items">
+            <button type="button" class="match-item is-text" data-key="sound" data-label="Sound">Buzzer</button>
+            <button type="button" class="match-item is-text" data-key="light" data-label="Light">Lamp</button>
+            <button type="button" class="match-item is-text" data-key="move" data-label="Movement">Motor</button>
+            <button type="button" class="match-item is-text" data-key="sound" data-label="Sound">Loudspeaker</button>
+            <button type="button" class="match-item is-text" data-key="light" data-label="Light">LED</button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="light">Light</button>
+            <button type="button" class="match-target" data-key="sound">Sound</button>
+            <button type="button" class="match-target" data-key="move">Movement</button>
+          </div>
+        </div>
+        <div class="q-explain">Output devices change electrical energy into something useful: <strong>light</strong> (lamp, LED), <strong>sound</strong> (buzzer, loudspeaker) or <strong>movement</strong> (motor).</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">2.</span>Match each symbol to its name.</p>
+        <div class="match">
+          <p class="match-hint">Drag each symbol onto its name, or tap a symbol and then its name.</p>
+          <div class="match-items">
+            <button type="button" class="match-item" data-key="led" data-label="LED" aria-label="Symbol 1">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-led"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="motor" data-label="Motor" aria-label="Symbol 2">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-motor"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="resistor" data-label="Resistor" aria-label="Symbol 3">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-resistor"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="lamp" data-label="Lamp" aria-label="Symbol 4">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-lamp"/></svg>
+            </button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="lamp">Lamp</button>
+            <button type="button" class="match-target" data-key="resistor">Resistor</button>
+            <button type="button" class="match-target" data-key="led">LED</button>
+            <button type="button" class="match-target" data-key="motor">Motor</button>
+          </div>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>Look for small arrows pointing <strong>out</strong> of a symbol: they show light being given out. A letter in a circle tells you what the component is.</p></details>
+        <div class="q-explain">The <strong>LED</strong> symbol is a triangle with a bar, inside a circle, with arrows for the light coming out. The <strong>motor</strong> is a circle with M in it.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">3.</span>Match each job to the best output device.</p>
+        <div class="match">
+          <p class="match-hint">Drag each job onto a device, or tap a job and then a device.</p>
+          <div class="match-items">
+            <button type="button" class="match-item is-text" data-key="buzzer" data-label="Buzzer">A doorbell</button>
+            <button type="button" class="match-item is-text" data-key="motor" data-label="Motor">Electric car windows</button>
+            <button type="button" class="match-item is-text" data-key="speaker" data-label="Loudspeaker">Playing music from a phone</button>
+            <button type="button" class="match-item is-text" data-key="led" data-label="LED">A small power-on light on a TV</button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="led">LED</button>
+            <button type="button" class="match-target" data-key="buzzer">Buzzer</button>
+            <button type="button" class="match-target" data-key="motor">Motor</button>
+            <button type="button" class="match-target" data-key="speaker">Loudspeaker</button>
+          </div>
+        </div>
+        <div class="q-explain">A <strong>buzzer</strong> makes one simple sound, but music needs a <strong>loudspeaker</strong>. An <strong>LED</strong> is small and uses little energy, so it suits an indicator light.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">4.</span>Why does an LED need a resistor in series with it?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="A resistor makes it harder for current to flow, so it can't make the LED brighter. Think about what too much current would do to a small LED.">To make the LED brighter</button>
+          <button type="button" class="option" data-correct>To limit the current, so the LED isn't damaged</button>
+          <button type="button" class="option" data-feedback="The LED itself only lets current through one way. The resistor has a different job.">So that current can only flow one way</button>
+          <button type="button" class="option" data-feedback="Resistors don't store energy. Think about what could happen to a small LED if too much current flowed through it.">To store energy for the LED</button>
+        </div>
+        <div class="q-explain">Without a resistor, the current through an LED could be too big and <strong>damage</strong> it. The resistor <strong>limits the current</strong>.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">5.</span>Which circuit lights the LED safely?</p>
+        <div class="options">
+          <button type="button" class="option" aria-label="Circuit with only a cell and an LED" data-feedback="There's nothing to limit the current, so it could be big enough to damage the LED.">
+            <svg class="circuit" viewBox="0 0 320 170" aria-hidden="true">
+              <path class="wire" d="M130 150H30V80H130M190 80H290V150H190"/>
+              <use href="#sym-led" x="130" y="60" width="60" height="40"/>
+              <use href="#sym-cell" x="130" y="130" width="60" height="40"/>
+            </svg>
+          </button>
+          <button type="button" class="option" data-correct aria-label="Circuit with a resistor and an LED in the loop with the cell">
+            <svg class="circuit" viewBox="0 0 320 170" aria-hidden="true">
+              <path class="wire" d="M130 150H30V80H70M130 80H190M250 80H290V150H190"/>
+              <use href="#sym-resistor" x="70" y="60" width="60" height="40"/>
+              <use href="#sym-led" x="190" y="60" width="60" height="40"/>
+              <use href="#sym-cell" x="130" y="130" width="60" height="40"/>
+            </svg>
+          </button>
+          <button type="button" class="option" aria-label="Circuit with a resistor connected across the LED" data-feedback="The resistor is connected <strong>across</strong> the LED, not in the loop with it, so it can't limit the current through the LED.">
+            <svg class="circuit" viewBox="0 0 320 170" aria-hidden="true">
+              <path class="wire" d="M130 150H30V80H130M190 80H290V150H190M100 80V25H130M190 25H220V80"/>
+              <use href="#sym-led" x="130" y="60" width="60" height="40"/>
+              <use href="#sym-resistor" x="130" y="5" width="60" height="40"/>
+              <use href="#sym-cell" x="130" y="130" width="60" height="40"/>
+              <circle class="dot" cx="100" cy="80" r="5"/>
+              <circle class="dot" cx="220" cy="80" r="5"/>
+            </svg>
+          </button>
+        </div>
+        <div class="q-explain">The resistor must be <strong>in series</strong> with the LED (in the same loop), so the same, smaller current flows through both.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">6.</span>Spot the mistake: this LED doesn't light. The cell, the resistor and the wires all work. Why not?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 320 180" role="img" aria-label="A cell, a resistor and an LED in one loop">
+            <path class="wire" d="M130 150H30V30H70M130 30H190M250 30H290V150H190"/>
+            <use href="#sym-resistor" x="70" y="10" width="60" height="40"/>
+            <use href="#sym-led" x="190" y="10" width="60" height="40" transform="rotate(180 220 30)"/>
+            <use href="#sym-cell" x="130" y="130" width="60" height="40"/>
+          </svg>
+        </figure>
+        <div class="options">
+          <button type="button" class="option" data-feedback="A resistor makes the current smaller, but it doesn't stop it. Look closely at the LED symbol.">The resistor stops all the current</button>
+          <button type="button" class="option" data-correct>The LED is the wrong way round</button>
+          <button type="button" class="option" data-feedback="In a single loop the order doesn't matter: the same current flows through everything. Look closely at the LED symbol.">The resistor should come after the LED</button>
+          <button type="button" class="option" data-feedback="One cell is often enough to light an LED. Look closely at the LED symbol.">An LED needs more than one cell</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>An LED only lets current through one way. The triangle in its symbol points the way current can go. Current leaves the cell from the long line (+).</p></details>
+        <div class="q-explain">Current leaves the long line (+) of the cell and goes round the loop to the left, then along the top from left to right. The LED's triangle points the <strong>other way</strong>, so it blocks the current. Turn the LED round and it lights.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">7.</span>What is a relay?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="A relay doesn't store energy. It contains a coil and a switch.">A kind of battery that passes energy on</button>
+          <button type="button" class="option" data-feedback="That would be an input device. A relay contains a coil and a switch.">A sensor that detects movement</button>
+          <button type="button" class="option" data-correct>A switch that is worked by an electromagnet</button>
+          <button type="button" class="option" data-feedback="A relay doesn't give out light. It contains a coil and a switch.">A lamp that flashes on and off</button>
+        </div>
+        <div class="q-explain">When current flows through the relay's <strong>coil</strong>, it becomes an <strong>electromagnet</strong> and pulls a <strong>switch</strong> closed.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">8.</span>A car's starter motor needs a very big current. Why is it switched on using a relay?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="A relay is just a switch. It doesn't change how fast the motor turns.">It makes the motor turn faster</button>
+          <button type="button" class="option" data-correct>A small current in the relay's coil can switch on the much bigger current for the motor</button>
+          <button type="button" class="option" data-feedback="Once the relay's switch closes, current does flow through the motor. That's the point of switching it on.">It stops any current flowing through the motor</button>
+          <button type="button" class="option" data-feedback="A relay doesn't make sound on purpose. Think about the two circuits it joins.">It changes electrical energy into sound</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>A relay joins two circuits: one through its coil, and one through its switch. Which circuit does the ignition key control, and which one carries the motor's current?</p></details>
+        <div class="q-explain">The ignition switch only has to carry a <strong>small current</strong> through the relay's coil. The relay's switch then turns on the <strong>big current</strong> for the motor, which keeps the ignition switch and its thin wires safe.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq q-challenge">
+        <p class="q-prompt"><span class="q-tag">Challenge</span><span class="q-num">9.</span>LEDs X and Y are on separate parallel branches, each with its own resistor. Which LEDs light?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 320 180" role="img" aria-label="A cell with two parallel branches. Each branch has an LED and a resistor. LED X is on the top branch, LED Y on the middle branch.">
+            <path class="wire" d="M130 150H30V30H70M130 30H190M250 30H290V150H190M30 90H70M130 90H190M250 90H290"/>
+            <use href="#sym-led" x="70" y="10" width="60" height="40"/>
+            <use href="#sym-resistor" x="190" y="10" width="60" height="40"/>
+            <use href="#sym-led" x="70" y="70" width="60" height="40" transform="rotate(180 100 90)"/>
+            <use href="#sym-resistor" x="190" y="70" width="60" height="40"/>
+            <use href="#sym-cell" x="130" y="130" width="60" height="40"/>
+            <circle class="dot" cx="30" cy="90" r="5"/>
+            <circle class="dot" cx="290" cy="90" r="5"/>
+            <text class="label" x="50" y="22" text-anchor="middle">X</text>
+            <text class="label" x="50" y="82" text-anchor="middle">Y</text>
+          </svg>
+        </figure>
+        <div class="options">
+          <button type="button" class="option" data-correct>X only</button>
+          <button type="button" class="option" data-feedback="Trace the current from the + side of the cell. Which way does it go through Y, and which way does Y's triangle point?">Y only</button>
+          <button type="button" class="option" data-feedback="Each LED only lets current through one way. Do both triangles point the same way as the current?">Both X and Y</button>
+          <button type="button" class="option" data-feedback="Each branch is a complete loop with the cell. Check each LED's direction on its own.">Neither</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>Current leaves the cell from the long line (+). Follow it to the dot where it splits, then along each branch. The triangle in an LED symbol points the way current can flow through it.</p></details>
+        <div class="q-explain">Current leaves the long line (+) of the cell, goes up the left side and, in both branches, flows from <strong>left to right</strong>. LED X points that way, so it lights. LED Y is the <strong>wrong way round</strong>, so it blocks the current in its own branch and stays off. X doesn't mind, because parallel branches work on their own.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">Free for teachers to use. No logins, no tracking.</div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Cloudflare reads this file (it is not served as a page). The first matching line wins.
+# Old addresses from before each level got its own page (Nov 2026), so saved links keep working.
+/starters/bge/electricity-circuit-builder.html  /bge/circuit-builder.html  301
+/starters/bge/electricity-circuit-builder       /bge/circuit-builder       301
+/starters/:level/index.html                     /:level/starters/          301
+/starters/:level/                               /:level/starters/          301
+/starters/:level                                /:level/starters/          301
+/starters/:level/*                              /:level/starters/:splat    301
+/starters/                                      /                          301
+/starters                                       /                          301

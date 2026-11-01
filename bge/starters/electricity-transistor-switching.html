@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Transistor switching · BGE · Sloss Physics</title>
+  <meta name="description" content="BGE Fourth level starter (SCN 4-09c): the transistor as an electronic switch, and electronic systems as input, process and output.">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <link rel="stylesheet" href="../../assets/css/starter.css">
+  <script src="../../assets/js/circuit-symbols.js" defer></script>
+  <script src="../../assets/js/starter.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../../index.html"><svg viewBox="0 0 34 22" aria-hidden="true"><path d="M2 11Q9.5-3 17 11T32 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Sloss<span>Physics</span></a>
+      <nav class="level-nav" aria-label="Levels">
+        <ul>
+          <li><a data-level="bge" href="../index.html" aria-current="true">BGE</a></li>
+          <li><a data-level="n4" href="../../n4/index.html">N4</a></li>
+          <li><a data-level="n5" href="../../n5/index.html">N5</a></li>
+          <li><a data-level="higher" href="../../higher/index.html">Higher</a></li>
+          <li><a data-level="ah" href="../../ah/index.html">AH</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap starter" data-level="bge">
+    <ol class="crumbs">
+      <li><a href="../../index.html">All levels</a></li>
+      <li><a href="../index.html">BGE Science</a></li>
+      <li><a href="index.html">Starters</a></li>
+      <li>Forces, electricity and waves</li>
+    </ol>
+
+    <p class="spec-ref">BGE · Fourth level · Forces, electricity and waves · SCN 4-09c</p>
+    <h1>Transistor switching</h1>
+    <div class="lisc">
+      <p><strong>LI:</strong> I am learning how a transistor can be used as an electronic switch.</p>
+      <p><strong>SC:</strong> I can describe what a transistor does · I can sort a system into input, process and output · I can choose the input and output devices for an electronic system.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="timer" data-timer>
+        <select aria-label="Timer length">
+          <option value="3">3 min</option>
+          <option value="5" selected>5 min</option>
+          <option value="8">8 min</option>
+          <option value="10">10 min</option>
+        </select>
+        <output class="timer-display">5:00</output>
+        <button type="button" class="tool" data-timer-toggle>Start</button>
+      </div>
+      <button type="button" class="tool" data-show-answers aria-pressed="false">Show answers</button>
+      <button type="button" class="tool" data-reset>Reset</button>
+    </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">1.</span>What job does a transistor do in an electronic circuit?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="That's what an input device, such as an LDR or a thermistor, does.">It senses light or heat</button>
+          <button type="button" class="option" data-feedback="That's what an output device, such as a lamp or a buzzer, does.">It gives out light or sound</button>
+          <button type="button" class="option" data-correct>It acts as a switch with no moving parts</button>
+          <button type="button" class="option" data-feedback="That's what a cell or a battery does.">It stores energy, like a battery</button>
+        </div>
+        <div class="q-explain">A transistor is an <strong>electronic switch</strong>. It switches an output on or off, with no moving parts and no one pressing it.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">2.</span>Match each symbol to its name.</p>
+        <div class="match">
+          <p class="match-hint">Drag each symbol onto its name, or tap a symbol and then its name.</p>
+          <div class="match-items">
+            <button type="button" class="match-item" data-key="ldr" data-label="LDR" aria-label="Symbol 1">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-ldr"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="transistor" data-label="Transistor" aria-label="Symbol 2">
+              <svg viewBox="0 0 60 60" aria-hidden="true"><use href="#sym-transistor-npn"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="led" data-label="LED" aria-label="Symbol 3">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-led"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="thermistor" data-label="Thermistor" aria-label="Symbol 4">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-thermistor"/></svg>
+            </button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="thermistor">Thermistor</button>
+            <button type="button" class="match-target" data-key="led">LED</button>
+            <button type="button" class="match-target" data-key="transistor">Transistor</button>
+            <button type="button" class="match-target" data-key="ldr">LDR</button>
+          </div>
+        </div>
+        <div class="q-explain">The <strong>transistor</strong> is the only one with <strong>three</strong> connections. Arrows pointing <strong>in</strong> mean the LDR senses light; arrows pointing <strong>out</strong> mean the LED gives out light.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">3.</span>An electronic system has an input, a process and an output. Sort these parts.</p>
+        <div class="match is-sort">
+          <p class="match-hint">Drag each one into its group, or tap it and then the group.</p>
+          <div class="match-items">
+            <button type="button" class="match-item is-text" data-key="in" data-label="Input">LDR</button>
+            <button type="button" class="match-item is-text" data-key="out" data-label="Output">Buzzer</button>
+            <button type="button" class="match-item is-text" data-key="process" data-label="Process">Transistor</button>
+            <button type="button" class="match-item is-text" data-key="in" data-label="Input">Thermistor</button>
+            <button type="button" class="match-item is-text" data-key="out" data-label="Output">Lamp</button>
+            <button type="button" class="match-item is-text" data-key="in" data-label="Input">Microphone</button>
+            <button type="button" class="match-item is-text" data-key="out" data-label="Output">Motor</button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="in">Input</button>
+            <button type="button" class="match-target" data-key="process">Process</button>
+            <button type="button" class="match-target" data-key="out">Output</button>
+          </div>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>The <strong>input</strong> senses a change. The <strong>output</strong> does something you can see, hear or feel. The <strong>process</strong> sits in between and decides whether to switch the output on.</p></details>
+        <div class="q-explain">Inputs <strong>sense</strong> (LDR, thermistor, microphone). The transistor <strong>processes</strong>: it switches. Outputs <strong>act</strong> (lamp, buzzer, motor).</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">4.</span>What makes a transistor switch on?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="A transistor has no moving parts: nobody presses it. It is switched by the rest of the circuit.">Someone pressing it</button>
+          <button type="button" class="option" data-feedback="That's how an LDR reacts. A transistor reacts to what the rest of the circuit feeds into it.">Light shining on it</button>
+          <button type="button" class="option" data-correct>The voltage at its input (the base) becoming high enough</button>
+          <button type="button" class="option" data-feedback="The lamp is the output. The transistor decides whether the lamp comes on, not the other way round.">The lamp it controls getting hot</button>
+        </div>
+        <div class="q-explain">When the <strong>voltage</strong> at the transistor's input (the <strong>base</strong>) is high enough, it switches <strong>on</strong> and current can flow through the output.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">5.</span>Why does a street light use a transistor, instead of a switch someone works by hand?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="A transistor is a switch: it turns the lamp on or off, but doesn't change how bright it is when on.">It makes the lamp brighter</button>
+          <button type="button" class="option" data-correct>It switches the light on and off automatically when the input changes</button>
+          <button type="button" class="option" data-feedback="A transistor doesn't store energy. The energy comes from the supply.">It stores energy during the day for use at night</button>
+          <button type="button" class="option" data-feedback="The circuit still needs a supply. Think about who, or what, decides when the light comes on.">It means the circuit doesn't need a power supply</button>
+        </div>
+        <div class="q-explain">The LDR senses that it's getting dark and the transistor switches the lamp on <strong>automatically</strong>. Nobody has to go round every street light.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">6.</span>A gardener wants an alarm that sounds when it gets cold enough for frost. Which input and output devices are needed?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="An LDR senses light, not temperature. Frost depends on how cold it is.">LDR and buzzer</button>
+          <button type="button" class="option" data-feedback="A lamp gives out light. The gardener wants to hear the alarm.">Thermistor and lamp</button>
+          <button type="button" class="option" data-feedback="A microphone senses sound. What does the alarm need to sense?">Microphone and buzzer</button>
+          <button type="button" class="option" data-correct>Thermistor and buzzer</button>
+        </div>
+        <div class="q-explain">A <strong>thermistor</strong> senses temperature (input). A <strong>buzzer</strong> makes the warning sound (output). A transistor in between does the switching.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">7.</span>A greenhouse fan should switch on by itself when it gets too hot. Which system would work?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="An LDR senses light. A sunny day isn't always a hot one: what does the system need to sense?">LDR, then transistor, then motor</button>
+          <button type="button" class="option" data-correct>Thermistor, then transistor, then motor</button>
+          <button type="button" class="option" data-feedback="A lamp gives out light. Which output device could turn a fan?">Thermistor, then transistor, then lamp</button>
+          <button type="button" class="option" data-feedback="The parts are right, but the order isn't. Which part senses, and which part acts?">Motor, then transistor, then thermistor</button>
+        </div>
+        <div class="q-explain">Input → process → output: a <strong>thermistor</strong> senses the heat, the <strong>transistor</strong> switches, and a <strong>motor</strong> turns the fan.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">8.</span>This is a street light circuit. Which labelled part is the input sensor that detects light?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 300 240" role="img" aria-label="A transistor switching circuit with a battery and four labelled parts: P, Q, R and S">
+            <path class="wire" d="M30 90V20H240M30 150V220H240V140M110 20V30M110 90V130M110 190V220M110 110H200"/>
+            <use href="#sym-battery" x="0" y="100" width="60" height="40" transform="rotate(90 30 120)"/>
+            <use href="#sym-resistor" x="80" y="40" width="60" height="40" transform="rotate(90 110 60)"/>
+            <use href="#sym-ldr" x="80" y="140" width="60" height="40" transform="rotate(90 110 160)"/>
+            <use href="#sym-transistor-npn" x="200" y="80" width="60" height="60"/>
+            <use href="#sym-lamp" x="210" y="30" width="60" height="40" transform="rotate(90 240 50)"/>
+            <circle class="dot" cx="110" cy="20" r="5"/>
+            <circle class="dot" cx="110" cy="110" r="5"/>
+            <circle class="dot" cx="110" cy="220" r="5"/>
+            <text class="label" x="128" y="66">P</text>
+            <text class="label" x="132" y="184">Q</text>
+            <text class="label" x="258" y="128">R</text>
+            <text class="label" x="258" y="56">S</text>
+          </svg>
+        </figure>
+        <div class="options">
+          <button type="button" class="option" data-feedback="P is a plain box: a fixed resistor. Its resistance doesn't change with light.">P</button>
+          <button type="button" class="option" data-correct>Q</button>
+          <button type="button" class="option" data-feedback="R has three connections: it's the transistor, the part that does the switching.">R</button>
+          <button type="button" class="option" data-feedback="S is the lamp: the output device that the circuit switches on.">S</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>Look for the symbol with arrows pointing <strong>in</strong> towards it. What might those arrows stand for?</p></details>
+        <div class="q-explain"><strong>Q</strong> is the LDR (arrows pointing in show light). It is the <strong>input</strong>. R is the transistor (<strong>process</strong>) and S is the lamp (<strong>output</strong>).</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq q-challenge">
+        <p class="q-prompt"><span class="q-tag">Challenge</span><span class="q-num">9.</span>In this street light circuit, it is daytime and transistor R is switched off. Why is lamp S off, even though it is connected to the battery?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 300 240" role="img" aria-label="A transistor switching circuit with a battery, resistor P, LDR Q, transistor R and lamp S">
+            <path class="wire" d="M30 90V20H240M30 150V220H240V140M110 20V30M110 90V130M110 190V220M110 110H200"/>
+            <use href="#sym-battery" x="0" y="100" width="60" height="40" transform="rotate(90 30 120)"/>
+            <use href="#sym-resistor" x="80" y="40" width="60" height="40" transform="rotate(90 110 60)"/>
+            <use href="#sym-ldr" x="80" y="140" width="60" height="40" transform="rotate(90 110 160)"/>
+            <use href="#sym-transistor-npn" x="200" y="80" width="60" height="60"/>
+            <use href="#sym-lamp" x="210" y="30" width="60" height="40" transform="rotate(90 240 50)"/>
+            <circle class="dot" cx="110" cy="20" r="5"/>
+            <circle class="dot" cx="110" cy="110" r="5"/>
+            <circle class="dot" cx="110" cy="220" r="5"/>
+            <text class="label" x="128" y="66">P</text>
+            <text class="label" x="132" y="184">Q</text>
+            <text class="label" x="258" y="128">R</text>
+            <text class="label" x="258" y="56">S</text>
+          </svg>
+        </figure>
+        <div class="options">
+          <button type="button" class="option" data-feedback="Current isn't used up by any component. Follow the path through the lamp and back to the battery.">The LDR uses up all the current</button>
+          <button type="button" class="option" data-correct>The switched-off transistor is like an open switch, so there is no complete loop through the lamp</button>
+          <button type="button" class="option" data-feedback="A lamp lights whenever current flows through it, day or night. What decides whether current can flow through S?">A lamp can only light up in the dark</button>
+          <button type="button" class="option" data-feedback="The battery supplies energy all the time. Something else in the lamp's loop is stopping the current.">The battery only supplies energy at night</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>Start at the battery and follow the wire through lamp S. What else does the current have to pass through to get back to the battery?</p></details>
+        <div class="q-explain">Lamp S is in <strong>series</strong> with transistor R. When R is <strong>off</strong> it acts like an <strong>open switch</strong>: there is a gap in the lamp's loop, so no current flows. When it gets dark, R switches on, the loop is complete and the lamp lights.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">Free for teachers to use. No logins, no tracking.</div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Monitoring health · BGE · Sloss Physics</title>
+  <meta name="description" content="BGE Third level starter (SCN 3-12b): instruments for monitoring health, pulse rate, recovery rate, body mass index (BMI) and screening.">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <link rel="stylesheet" href="../../assets/css/starter.css">
+  <script src="../../assets/js/starter.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../../index.html"><svg viewBox="0 0 34 22" aria-hidden="true"><path d="M2 11Q9.5-3 17 11T32 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Sloss<span>Physics</span></a>
+      <nav class="level-nav" aria-label="Levels">
+        <ul>
+          <li><a data-level="bge" href="../index.html" aria-current="true">BGE</a></li>
+          <li><a data-level="n4" href="../../n4/index.html">N4</a></li>
+          <li><a data-level="n5" href="../../n5/index.html">N5</a></li>
+          <li><a data-level="higher" href="../../higher/index.html">Higher</a></li>
+          <li><a data-level="ah" href="../../ah/index.html">AH</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap starter" data-level="bge">
+    <ol class="crumbs">
+      <li><a href="../../index.html">All levels</a></li>
+      <li><a href="../index.html">BGE Science</a></li>
+      <li><a href="index.html">Starters</a></li>
+      <li>Biological systems</li>
+    </ol>
+
+    <p class="spec-ref">BGE · Third level · Biological systems · SCN 3-12b</p>
+    <h1>Monitoring health</h1>
+    <div class="lisc">
+      <p><strong>LI:</strong> I am learning how technology is used to monitor health.</p>
+      <p><strong>SC:</strong> I can choose an instrument to measure something about my health · I can work out a pulse rate and a recovery time · I can calculate BMI and say what it can't tell us.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="timer" data-timer>
+        <select aria-label="Timer length">
+          <option value="3">3 min</option>
+          <option value="5" selected>5 min</option>
+          <option value="8">8 min</option>
+          <option value="10">10 min</option>
+        </select>
+        <output class="timer-display">5:00</output>
+        <button type="button" class="tool" data-timer-toggle>Start</button>
+      </div>
+      <button type="button" class="tool" data-show-answers aria-pressed="false">Show answers</button>
+      <button type="button" class="tool" data-reset>Reset</button>
+    </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">1.</span>Match each instrument to what it measures.</p>
+        <div class="match">
+          <p class="match-hint">Drag each instrument onto what it measures, or tap an instrument and then a measurement.</p>
+          <div class="match-items">
+            <button type="button" class="match-item is-text" data-key="bp" data-label="Blood pressure">Blood pressure monitor (with an arm cuff)</button>
+            <button type="button" class="match-item is-text" data-key="temp" data-label="Body temperature">Ear thermometer</button>
+            <button type="button" class="match-item is-text" data-key="mass" data-label="Mass">Bathroom scales</button>
+            <button type="button" class="match-item is-text" data-key="pulse" data-label="Pulse rate">Heart rate monitor on a watch</button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="pulse">Pulse rate</button>
+            <button type="button" class="match-target" data-key="bp">Blood pressure</button>
+            <button type="button" class="match-target" data-key="temp">Body temperature</button>
+            <button type="button" class="match-target" data-key="mass">Mass</button>
+          </div>
+        </div>
+        <div class="q-explain">Doctors, nurses and people at home use instruments like these to <strong>monitor</strong> health and spot problems early.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">2.</span>Tap all the places where it is easy to feel your own pulse. There are 2.</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="You can't feel a pulse through the kneecap: it is bone. A pulse is felt where an artery is close to the skin.">Kneecap</button>
+          <button type="button" class="option" data-correct>Side of the neck</button>
+          <button type="button" class="option" data-feedback="There is no artery to press on at the tip of the elbow. A pulse is felt where an artery is close to the skin.">Tip of the elbow</button>
+          <button type="button" class="option" data-correct>Inside of the wrist</button>
+        </div>
+        <div class="q-explain">A pulse is felt where an <strong>artery</strong> runs close to the skin over something firm, such as the <strong>wrist</strong> and the <strong>neck</strong>. Use two fingers, not your thumb, which has a pulse of its own.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-input" data-answer="72" data-tol="0">
+        <p class="q-prompt"><span class="q-num">3.</span>A pupil counts 18 pulse beats in 15 seconds. What is their pulse rate in beats per minute?</p>
+        <div class="answer-row">
+          <label class="answer-label" for="mh-pulse">Pulse rate =</label>
+          <input class="answer" id="mh-pulse" type="text" inputmode="decimal" autocomplete="off">
+          <span class="answer-unit">beats per minute</span>
+          <button type="button" class="tool q-check">Check</button>
+        </div>
+        <p class="mistake" data-value="18">That is the number of beats in 15 seconds. How many lots of 15 seconds are there in a minute?</p>
+        <p class="mistake" data-value="1.2">You've divided 18 by 15. That gives beats per second, not per minute.</p>
+        <p class="mistake" data-value="36">That would be the number of beats in 30 seconds. A minute is 60 seconds.</p>
+        <details class="hint"><summary>Hint</summary><p>How many lots of 15 seconds make one minute?</p></details>
+        <div class="q-explain">
+          <ul class="working">
+            <li>60 s ÷ 15 s = 4</li>
+            <li>pulse rate = 18 × 4</li>
+            <li>pulse rate = 72 beats per minute</li>
+          </ul>
+        </div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">4.</span>What is meant by someone's <strong>recovery time</strong> after exercise?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="That is how long they exercised for. Recovery is what happens after they stop.">How long they can keep exercising for</button>
+          <button type="button" class="option" data-feedback="That is their highest pulse rate. Recovery is about what happens next.">How high their pulse goes during exercise</button>
+          <button type="button" class="option" data-correct>The time it takes for their pulse to get back to its resting rate</button>
+          <button type="button" class="option" data-feedback="Recovery time is measured with a pulse, not by how tired someone feels.">How long they feel tired the next day</button>
+        </div>
+        <div class="q-explain">Recovery time is how long the pulse takes to return to its <strong>resting rate</strong> after exercise. The <strong>fitter</strong> someone is, the <strong>shorter</strong> it usually is.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-input" data-answer="4" data-tol="0">
+        <p class="q-prompt"><span class="q-num">5.</span>A pupil's resting pulse is 72 beats per minute. They exercise, then measure their pulse each minute after stopping. How many minutes did it take their pulse to get back to resting?</p>
+        <table class="data-table">
+          <thead><tr><th scope="col">Time after stopping (minutes)</th><th scope="col">Pulse rate (beats per minute)</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>140</td></tr>
+            <tr><td>1</td><td>118</td></tr>
+            <tr><td>2</td><td>96</td></tr>
+            <tr><td>3</td><td>80</td></tr>
+            <tr><td>4</td><td>72</td></tr>
+            <tr><td>5</td><td>72</td></tr>
+          </tbody>
+        </table>
+        <div class="answer-row">
+          <label class="answer-label" for="mh-recovery">Recovery time =</label>
+          <input class="answer" id="mh-recovery" type="text" inputmode="decimal" autocomplete="off">
+          <span class="answer-unit">minutes</span>
+          <button type="button" class="tool q-check">Check</button>
+        </div>
+        <p class="mistake" data-value="5">At 5 minutes the pulse is resting, but it got there earlier. Find the first time it reads 72.</p>
+        <p class="mistake" data-value="3">At 3 minutes the pulse is 80, still above resting. Look one row further down.</p>
+        <div class="q-explain">The pulse first reads the resting rate of <strong>72</strong> at <strong>4 minutes</strong>, so the recovery time is 4 minutes.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">6.</span>The graph shows the pulse rates of two people after they stop doing the same exercise. Which person is likely to be fitter?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 320 220" role="img" aria-label="Graph of pulse rate against time after stopping exercise. Both lines start high. Line A falls quickly to a flat resting level. Line B falls slowly and reaches the same level much later.">
+            <path class="wire" d="M50 20V190H300"/>
+            <path class="wire" d="M50 150H300" style="stroke-width:1.5" stroke-dasharray="6 6"/>
+            <path class="wire" d="M55 40Q90 140 140 150H290" style="stroke-width:3.5"/>
+            <path class="wire" d="M55 40Q230 60 285 148" style="stroke-width:3.5"/>
+            <text class="label" x="6" y="14">Pulse</text>
+            <text class="label" x="300" y="214" text-anchor="end">Time after stopping</text>
+            <text class="label" x="64" y="128">A</text>
+            <text class="label" x="250" y="80">B</text>
+            <text class="label" x="296" y="172" text-anchor="end" font-size="15">Resting</text>
+          </svg>
+        </figure>
+        <div class="options is-row">
+          <button type="button" class="option" data-correct>A</button>
+          <button type="button" class="option" data-feedback="B's pulse takes much longer to come back down. What does a slow recovery suggest?">B</button>
+          <button type="button" class="option" data-feedback="Both started at the same pulse rate, but they recovered at different speeds. That tells you something.">You can't tell</button>
+        </div>
+        <div class="q-explain">A's pulse gets back to resting much <strong>faster</strong>. A shorter recovery time is a sign of a fitter heart and lungs.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-input" data-answer="23.4">
+        <p class="q-prompt"><span class="q-num">7.</span>Body mass index (BMI) is calculated from a person's mass and height. An adult has a mass of 60 kg and a height of 1.60 m. Calculate their BMI.</p>
+        <figure class="figure">
+          <ul class="working">
+            <li>BMI = mass ÷ (height × height)</li>
+          </ul>
+        </figure>
+        <div class="answer-row">
+          <label class="answer-label" for="mh-bmi">BMI =</label>
+          <input class="answer" id="mh-bmi" type="text" inputmode="decimal" autocomplete="off">
+          <span class="answer-unit">kg/m²</span>
+          <button type="button" class="tool q-check">Check</button>
+        </div>
+        <p class="mistake" data-value="37.5">You've divided by the height only once. Work out height × height first.</p>
+        <p class="mistake" data-value="0.0427">You've divided the wrong way round. It is mass divided by height × height.</p>
+        <p class="mistake" data-value="153.6">You've multiplied. It is mass <strong>divided by</strong> height × height.</p>
+        <details class="hint"><summary>Hint</summary><p>Work out 1.60 × 1.60 first, then divide the mass by your answer.</p></details>
+        <div class="q-explain">
+          <ul class="working">
+            <li>BMI = mass ÷ (height × height)</li>
+            <li>BMI = 60 ÷ (1.60 × 1.60)</li>
+            <li>BMI = 23.4 kg/m²</li>
+          </ul>
+        </div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">8.</span>The NHS invites some adults for <strong>screening</strong>, for example for bowel cancer. Why?</p>
+        <div class="options">
+          <button type="button" class="option" data-correct>To find a condition early, often before there are symptoms, when it is easier to treat</button>
+          <button type="button" class="option" data-feedback="Screening is a test. It finds a condition but doesn't cure it on the spot.">To cure the condition straight away</button>
+          <button type="button" class="option" data-feedback="Most people who are screened don't have the condition. That is why it is a check.">Because everyone who is screened has the condition</button>
+          <button type="button" class="option" data-feedback="Bowel cancer can't be caught from another person. Think about why finding it early helps.">To stop the condition spreading to other people</button>
+        </div>
+        <div class="q-explain">Screening checks healthy-looking people so that conditions such as bowel cancer, diabetes or eye disease are found <strong>early</strong>. Early treatment usually works better.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq q-challenge">
+        <p class="q-prompt"><span class="q-tag">Challenge</span><span class="q-num">9.</span>Two adults are both 1.80 m tall and have a mass of 95 kg, so both have a BMI of 29.3. One is a rugby player with lots of muscle. The other does no exercise. What does this show about BMI?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="They have exactly the same BMI, but are they equally healthy? Think about what BMI leaves out.">They must be equally healthy, because their BMIs are the same</button>
+          <button type="button" class="option" data-correct>BMI only uses mass and height, so it can't tell muscle from fat</button>
+          <button type="button" class="option" data-feedback="Check the numbers: same mass and same height give the same BMI. The calculation isn't the problem.">One of the BMIs must have been calculated wrongly</button>
+          <button type="button" class="option" data-feedback="BMI is still useful for most people. This example shows one thing it can't tell us.">BMI is useless and is never used</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>BMI is worked out from just two measurements. Is there anything about the rugby player's body those two numbers don't show?</p></details>
+        <div class="q-explain">BMI uses only <strong>mass and height</strong>. Muscle is heavy, so a muscly athlete can have a high BMI without being unhealthy. Doctors use BMI alongside other measurements, such as waist size and blood pressure.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">Free for teachers to use. No logins, no tracking.</div>
+  </footer>
+</body>
+</html>

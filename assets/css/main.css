@@ -250,6 +250,7 @@ a.level:active { transform: translate(4px, 4px); box-shadow: none; }
   font-weight: 700;
   letter-spacing: -0.02em;
 }
+.level-badge svg { width: 44px; height: 44px; }   /* icon badges on a level page */
 .level-body { display: flex; flex-direction: column; gap: 4px; }
 .level h2 { margin: 0; font-size: 1.45rem; line-height: 1.2; }
 .level .stage { color: var(--muted); font-size: 1.05rem; }
@@ -289,7 +290,7 @@ a.level:active { transform: translate(4px, 4px); box-shadow: none; }
 }
 .crumbs a:active { transform: translate(3px, 3px); box-shadow: none; }
 
-/* Level page: one section per unit */
+/* Starters list: one section per unit */
 .unit {
   margin: 0 0 20px;
   padding: 22px;
@@ -363,7 +364,6 @@ details.unit > .starter-list { margin: 0; padding: 0 22px 22px; }
 }
 
 /* Tools section: sits above the units, marked with the level colour */
-.unit-tools { border-left: 8px solid var(--level-colour, var(--accent)); }
 
 .starter-list {
   display: grid;

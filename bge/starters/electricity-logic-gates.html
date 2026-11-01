@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logic gates · BGE · Sloss Physics</title>
+  <meta name="description" content="BGE Fourth level starter (SCN 4-09c): AND, OR and NOT gates, truth tables, and choosing a gate for a real situation.">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <link rel="stylesheet" href="../../assets/css/starter.css">
+  <script src="../../assets/js/circuit-symbols.js" defer></script>
+  <script src="../../assets/js/starter.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../../index.html"><svg viewBox="0 0 34 22" aria-hidden="true"><path d="M2 11Q9.5-3 17 11T32 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Sloss<span>Physics</span></a>
+      <nav class="level-nav" aria-label="Levels">
+        <ul>
+          <li><a data-level="bge" href="../index.html" aria-current="true">BGE</a></li>
+          <li><a data-level="n4" href="../../n4/index.html">N4</a></li>
+          <li><a data-level="n5" href="../../n5/index.html">N5</a></li>
+          <li><a data-level="higher" href="../../higher/index.html">Higher</a></li>
+          <li><a data-level="ah" href="../../ah/index.html">AH</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap starter" data-level="bge">
+    <ol class="crumbs">
+      <li><a href="../../index.html">All levels</a></li>
+      <li><a href="../index.html">BGE Science</a></li>
+      <li><a href="index.html">Starters</a></li>
+      <li>Forces, electricity and waves</li>
+    </ol>
+
+    <p class="spec-ref">BGE · Fourth level · Forces, electricity and waves · SCN 4-09c</p>
+    <h1>Logic gates</h1>
+    <div class="lisc">
+      <p><strong>LI:</strong> I am learning how logic gates make decisions in electronic systems.</p>
+      <p><strong>SC:</strong> I can recognise AND, OR and NOT gates · I can complete a truth table · I can choose a gate for a real situation.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="timer" data-timer>
+        <select aria-label="Timer length">
+          <option value="3">3 min</option>
+          <option value="5" selected>5 min</option>
+          <option value="8">8 min</option>
+          <option value="10">10 min</option>
+        </select>
+        <output class="timer-display">5:00</output>
+        <button type="button" class="tool" data-timer-toggle>Start</button>
+      </div>
+      <button type="button" class="tool" data-show-answers aria-pressed="false">Show answers</button>
+      <button type="button" class="tool" data-reset>Reset</button>
+    </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">1.</span>Match each logic gate symbol to its name.</p>
+        <div class="match">
+          <p class="match-hint">Drag each symbol onto its name, or tap a symbol and then its name.</p>
+          <div class="match-items">
+            <button type="button" class="match-item" data-key="or" data-label="OR" aria-label="Symbol 1">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-gate-or"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="not" data-label="NOT" aria-label="Symbol 2">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-gate-not"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="and" data-label="AND" aria-label="Symbol 3">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-gate-and"/></svg>
+            </button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="and">AND</button>
+            <button type="button" class="match-target" data-key="or">OR</button>
+            <button type="button" class="match-target" data-key="not">NOT</button>
+          </div>
+        </div>
+        <div class="q-explain"><strong>AND</strong> has a flat back and a round front. <strong>OR</strong> has a curved back and a pointed front. <strong>NOT</strong> is a triangle with a small circle, and has only one input.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">2.</span>In a logic circuit, what does 1 stand for?</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="Think of a lamp connected to a logic output. When the output is 1, would the lamp be lit?">A low voltage: off</button>
+          <button type="button" class="option" data-feedback="It isn't a measurement. Logic only has two states, and 1 is one of them.">Exactly one volt</button>
+          <button type="button" class="option" data-correct>A high voltage: on</button>
+          <button type="button" class="option" data-feedback="It isn't counting anything. Logic only has two states, and 1 is one of them.">One component switched on</button>
+        </div>
+        <div class="q-explain">Logic gates only use two states: <strong>1 = high (on)</strong> and <strong>0 = low (off)</strong>.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">3.</span>An AND gate has input A = 1 and input B = 0. What is the output?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 260 90" role="img" aria-label="An AND gate with input A at 1 and input B at 0" style="max-width:360px">
+            <path class="wire" d="M70 14H90V32H110M70 66H90V48H110M170 40H230"/>
+            <use href="#sym-gate-and" x="110" y="20" width="60" height="40"/>
+            <text class="label" x="62" y="20" text-anchor="end">A = 1</text>
+            <text class="label" x="62" y="72" text-anchor="end">B = 0</text>
+            <text class="label" x="200" y="30" text-anchor="middle">Output</text>
+          </svg>
+        </figure>
+        <div class="options is-pair">
+          <button type="button" class="option" data-correct>0</button>
+          <button type="button" class="option" data-feedback="That would be true for an OR gate. Read the gate's name as a sentence.">1</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>Say it as a sentence: "The output is 1 if A is 1 AND B is 1." Is that true here?</p></details>
+        <div class="q-explain">An AND gate only gives 1 when <strong>both</strong> inputs are 1. Here B is 0, so the output is <strong>0</strong>.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-truth">
+        <p class="q-prompt"><span class="q-num">4.</span>Complete the truth table for a NOT gate.</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 260 80" role="img" aria-label="A NOT gate with input A" style="max-width:360px">
+            <path class="wire" d="M70 40H110M170 40H230"/>
+            <use href="#sym-gate-not" x="110" y="20" width="60" height="40"/>
+            <text class="label" x="62" y="46" text-anchor="end">A</text>
+            <text class="label" x="200" y="30" text-anchor="middle">Output</text>
+          </svg>
+        </figure>
+        <p class="match-hint">Tap each ? to set it to 0 or 1, then press Check.</p>
+        <table class="truth">
+          <thead><tr><th scope="col">A</th><th scope="col">Output</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td><button type="button" class="truth-cell" data-answer="1" aria-label="Output when A is 0">?</button></td></tr>
+            <tr><td>1</td><td><button type="button" class="truth-cell" data-answer="0" aria-label="Output when A is 1">?</button></td></tr>
+          </tbody>
+        </table>
+        <button type="button" class="tool q-check">Check</button>
+        <div class="q-explain">A NOT gate turns its input round: <strong>0 becomes 1</strong> and <strong>1 becomes 0</strong>. It is sometimes called an inverter.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-truth">
+        <p class="q-prompt"><span class="q-num">5.</span>Complete the truth table for an AND gate.</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 260 90" role="img" aria-label="An AND gate with inputs A and B" style="max-width:360px">
+            <path class="wire" d="M70 14H90V32H110M70 66H90V48H110M170 40H230"/>
+            <use href="#sym-gate-and" x="110" y="20" width="60" height="40"/>
+            <text class="label" x="62" y="20" text-anchor="end">A</text>
+            <text class="label" x="62" y="72" text-anchor="end">B</text>
+            <text class="label" x="200" y="30" text-anchor="middle">Output</text>
+          </svg>
+        </figure>
+        <p class="match-hint">Tap each ? to set it to 0 or 1, then press Check.</p>
+        <table class="truth">
+          <thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">Output</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>0</td><td><button type="button" class="truth-cell" data-answer="0" aria-label="Output when A is 0 and B is 0">?</button></td></tr>
+            <tr><td>0</td><td>1</td><td><button type="button" class="truth-cell" data-answer="0" aria-label="Output when A is 0 and B is 1">?</button></td></tr>
+            <tr><td>1</td><td>0</td><td><button type="button" class="truth-cell" data-answer="0" aria-label="Output when A is 1 and B is 0">?</button></td></tr>
+            <tr><td>1</td><td>1</td><td><button type="button" class="truth-cell" data-answer="1" aria-label="Output when A is 1 and B is 1">?</button></td></tr>
+          </tbody>
+        </table>
+        <button type="button" class="tool q-check">Check</button>
+        <div class="q-explain">The output of an AND gate is 1 only when A <strong>and</strong> B are both 1. Every other row gives 0.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-truth">
+        <p class="q-prompt"><span class="q-num">6.</span>Complete the truth table for an OR gate.</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 260 90" role="img" aria-label="An OR gate with inputs A and B" style="max-width:360px">
+            <path class="wire" d="M70 14H90V32H110M70 66H90V48H110M170 40H230"/>
+            <use href="#sym-gate-or" x="110" y="20" width="60" height="40"/>
+            <text class="label" x="62" y="20" text-anchor="end">A</text>
+            <text class="label" x="62" y="72" text-anchor="end">B</text>
+            <text class="label" x="200" y="30" text-anchor="middle">Output</text>
+          </svg>
+        </figure>
+        <p class="match-hint">Tap each ? to set it to 0 or 1, then press Check.</p>
+        <table class="truth">
+          <thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">Output</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>0</td><td><button type="button" class="truth-cell" data-answer="0" aria-label="Output when A is 0 and B is 0">?</button></td></tr>
+            <tr><td>0</td><td>1</td><td><button type="button" class="truth-cell" data-answer="1" aria-label="Output when A is 0 and B is 1">?</button></td></tr>
+            <tr><td>1</td><td>0</td><td><button type="button" class="truth-cell" data-answer="1" aria-label="Output when A is 1 and B is 0">?</button></td></tr>
+            <tr><td>1</td><td>1</td><td><button type="button" class="truth-cell" data-answer="1" aria-label="Output when A is 1 and B is 1">?</button></td></tr>
+          </tbody>
+        </table>
+        <button type="button" class="tool q-check">Check</button>
+        <details class="hint"><summary>Hint</summary><p>Look at the last row carefully. Does "A is 1 OR B is 1" stay true when both of them are 1?</p></details>
+        <div class="q-explain">The output of an OR gate is 1 when A <strong>or</strong> B is 1, <strong>including when both are</strong>. It is only 0 when both inputs are 0.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">7.</span>Match each situation to the logic gate it needs.</p>
+        <div class="match">
+          <p class="match-hint">Drag each situation onto a gate, or tap a situation and then a gate.</p>
+          <div class="match-items">
+            <button type="button" class="match-item is-text" data-key="and" data-label="AND">A machine only starts when the safety guard is closed and the start button is pressed</button>
+            <button type="button" class="match-item is-text" data-key="not" data-label="NOT">A night light comes on when it is not light outside</button>
+            <button type="button" class="match-item is-text" data-key="or" data-label="OR">A car's inside light comes on if the driver's door or the passenger's door is open</button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="and">AND</button>
+            <button type="button" class="match-target" data-key="or">OR</button>
+            <button type="button" class="match-target" data-key="not">NOT</button>
+          </div>
+        </div>
+        <div class="q-explain">Listen for the key word: <strong>both</strong> things needed is AND, <strong>either</strong> thing is enough is OR, and the <strong>opposite</strong> of the input is NOT.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">8.</span>A greenhouse temperature sensor gives 1 when it is warm and 0 when it is cold. The heater should come on (1) when it is cold. Which gate should go between the sensor and the heater?</p>
+        <div class="options is-row">
+          <button type="button" class="option" data-feedback="An AND gate needs two inputs, but there is only one sensor here.">AND</button>
+          <button type="button" class="option" data-feedback="An OR gate needs two inputs, but there is only one sensor here.">OR</button>
+          <button type="button" class="option" data-correct>NOT</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>Write down the output you want when the sensor gives 0, and when it gives 1. How does the output compare with the input?</p></details>
+        <div class="q-explain">When the sensor gives <strong>0</strong> (cold), the heater needs <strong>1</strong>. The output is always the <strong>opposite</strong> of the input, so it needs a <strong>NOT</strong> gate.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-truth q-challenge">
+        <p class="q-prompt"><span class="q-tag">Challenge</span><span class="q-num">9.</span>A seatbelt warning buzzer. A = 1 when the car's engine is on. B = 1 when the seatbelt is fastened. Complete the truth table for the buzzer (the output).</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 320 110" role="img" aria-label="Input A goes straight into an AND gate. Input B goes through a NOT gate and then into the AND gate. The AND gate's output works the buzzer." style="max-width:440px">
+            <path class="wire" d="M40 36H170M40 76H70M130 76H150V52H170M230 44H290"/>
+            <use href="#sym-gate-not" x="70" y="56" width="60" height="40"/>
+            <use href="#sym-gate-and" x="170" y="24" width="60" height="40"/>
+            <text class="label" x="32" y="42" text-anchor="end">A</text>
+            <text class="label" x="32" y="82" text-anchor="end">B</text>
+            <text class="label" x="262" y="34" text-anchor="middle">Output</text>
+          </svg>
+        </figure>
+        <p class="match-hint">Tap each ? to set it to 0 or 1, then press Check.</p>
+        <table class="truth">
+          <thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">Output</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>0</td><td><button type="button" class="truth-cell" data-answer="0" aria-label="Output when A is 0 and B is 0">?</button></td></tr>
+            <tr><td>0</td><td>1</td><td><button type="button" class="truth-cell" data-answer="0" aria-label="Output when A is 0 and B is 1">?</button></td></tr>
+            <tr><td>1</td><td>0</td><td><button type="button" class="truth-cell" data-answer="1" aria-label="Output when A is 1 and B is 0">?</button></td></tr>
+            <tr><td>1</td><td>1</td><td><button type="button" class="truth-cell" data-answer="0" aria-label="Output when A is 1 and B is 1">?</button></td></tr>
+          </tbody>
+        </table>
+        <button type="button" class="tool q-check">Check</button>
+        <details class="hint"><summary>Hint</summary><p>For each row, work out what comes out of the NOT gate first. Then put that, together with A, into the AND gate.</p></details>
+        <div class="q-explain">The NOT gate turns B round, so it gives 1 only when the seatbelt is <strong>not</strong> fastened. The AND gate then gives 1 only when the engine is on <strong>and</strong> the seatbelt is not fastened: <strong>A = 1, B = 0</strong>. That is the only row where the buzzer sounds.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">Free for teachers to use. No logins, no tracking.</div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Input devices · BGE · Sloss Physics</title>
+  <meta name="description" content="BGE Fourth level starter (SCN 4-09b): symbols and uses of input devices, and how the resistance of an LDR and a thermistor changes.">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <link rel="stylesheet" href="../../assets/css/starter.css">
+  <script src="../../assets/js/circuit-symbols.js" defer></script>
+  <script src="../../assets/js/starter.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../../index.html"><svg viewBox="0 0 34 22" aria-hidden="true"><path d="M2 11Q9.5-3 17 11T32 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Sloss<span>Physics</span></a>
+      <nav class="level-nav" aria-label="Levels">
+        <ul>
+          <li><a data-level="bge" href="../index.html" aria-current="true">BGE</a></li>
+          <li><a data-level="n4" href="../../n4/index.html">N4</a></li>
+          <li><a data-level="n5" href="../../n5/index.html">N5</a></li>
+          <li><a data-level="higher" href="../../higher/index.html">Higher</a></li>
+          <li><a data-level="ah" href="../../ah/index.html">AH</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap starter" data-level="bge">
+    <ol class="crumbs">
+      <li><a href="../../index.html">All levels</a></li>
+      <li><a href="../index.html">BGE Science</a></li>
+      <li><a href="index.html">Starters</a></li>
+      <li>Forces, electricity and waves</li>
+    </ol>
+
+    <p class="spec-ref">BGE · Fourth level · Forces, electricity and waves · SCN 4-09b</p>
+    <h1>Input devices</h1>
+    <div class="lisc">
+      <p><strong>LI:</strong> I am learning how input devices sense changes around them.</p>
+      <p><strong>SC:</strong> I can name the symbols for input devices · I can describe how the resistance of an LDR and a thermistor changes · I can choose an input device for a job.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="timer" data-timer>
+        <select aria-label="Timer length">
+          <option value="3">3 min</option>
+          <option value="5" selected>5 min</option>
+          <option value="8">8 min</option>
+          <option value="10">10 min</option>
+        </select>
+        <output class="timer-display">5:00</output>
+        <button type="button" class="tool" data-timer-toggle>Start</button>
+      </div>
+      <button type="button" class="tool" data-show-answers aria-pressed="false">Show answers</button>
+      <button type="button" class="tool" data-reset>Reset</button>
+    </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">1.</span>Match each symbol to its name.</p>
+        <div class="match">
+          <p class="match-hint">Drag each symbol onto its name, or tap a symbol and then its name.</p>
+          <div class="match-items">
+            <button type="button" class="match-item" data-key="thermistor" data-label="Thermistor" aria-label="Symbol 1">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-thermistor"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="switch" data-label="Switch" aria-label="Symbol 2">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-switch-open"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="ldr" data-label="LDR" aria-label="Symbol 3">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-ldr"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="resistor" data-label="Resistor" aria-label="Symbol 4">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-resistor"/></svg>
+            </button>
+            <button type="button" class="match-item" data-key="variable" data-label="Variable resistor" aria-label="Symbol 5">
+              <svg viewBox="0 0 60 40" aria-hidden="true"><use href="#sym-variable-resistor"/></svg>
+            </button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="resistor">Resistor</button>
+            <button type="button" class="match-target" data-key="ldr">LDR</button>
+            <button type="button" class="match-target" data-key="variable">Variable resistor</button>
+            <button type="button" class="match-target" data-key="switch">Switch</button>
+            <button type="button" class="match-target" data-key="thermistor">Thermistor</button>
+          </div>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>Start with the plain box: that is a <strong>resistor</strong>. Most of the others are the same box with something added: arrows, a circle, or a line through it. What could each extra mark stand for?</p></details>
+        <div class="q-explain">The <strong>LDR</strong> has arrows pointing in (light coming in). The <strong>thermistor</strong> has a line with a flat foot through it. The <strong>variable resistor</strong> has an arrow through it, because you can change it.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">2.</span>Sort these into input devices and output devices.</p>
+        <div class="match is-sort">
+          <p class="match-hint">Drag each one into its group, or tap it and then the group.</p>
+          <div class="match-items">
+            <button type="button" class="match-item is-text" data-key="in" data-label="Input">Microphone</button>
+            <button type="button" class="match-item is-text" data-key="out" data-label="Output">Lamp</button>
+            <button type="button" class="match-item is-text" data-key="in" data-label="Input">LDR</button>
+            <button type="button" class="match-item is-text" data-key="out" data-label="Output">Motor</button>
+            <button type="button" class="match-item is-text" data-key="in" data-label="Input">Thermistor</button>
+            <button type="button" class="match-item is-text" data-key="out" data-label="Output">Loudspeaker</button>
+            <button type="button" class="match-item is-text" data-key="in" data-label="Input">Push switch</button>
+            <button type="button" class="match-item is-text" data-key="out" data-label="Output">LED</button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="in">Input device</button>
+            <button type="button" class="match-target" data-key="out">Output device</button>
+          </div>
+        </div>
+        <div class="q-explain"><strong>Input</strong> devices sense a change (light, heat, sound, a press) and feed it into the circuit. <strong>Output</strong> devices do something we can see, hear or feel: give out light, sound or movement.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">3.</span>An LDR is a light-dependent resistor. What happens to its resistance as the light gets brighter?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 120 50" role="img" aria-label="The LDR symbol" style="max-width:200px">
+            <path class="wire" d="M0 25H30M90 25H120"/>
+            <use href="#sym-ldr" x="30" y="5" width="60" height="40"/>
+          </svg>
+        </figure>
+        <div class="options is-row">
+          <button type="button" class="option" data-correct>It goes down</button>
+          <button type="button" class="option" data-feedback="Think back to your experiment: was the current through the LDR bigger in bright light or in the dark? What does that tell you about its resistance?">It goes up</button>
+          <button type="button" class="option" data-feedback="If its resistance never changed, it couldn't be used to sense light. It is <strong>light-dependent</strong>.">It stays the same</button>
+        </div>
+        <div class="q-explain">In bright light an LDR's resistance is <strong>low</strong>. In the dark its resistance is <strong>high</strong>.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">4.</span>A thermistor is warmed up. What happens to its resistance?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 120 50" role="img" aria-label="The thermistor symbol" style="max-width:200px">
+            <path class="wire" d="M0 25H30M90 25H120"/>
+            <use href="#sym-thermistor" x="30" y="5" width="60" height="40"/>
+          </svg>
+        </figure>
+        <div class="options is-row">
+          <button type="button" class="option" data-feedback="It's a common guess, but the thermistors you use in school do the opposite. Think about what you measured in class.">It goes up</button>
+          <button type="button" class="option" data-correct>It goes down</button>
+          <button type="button" class="option" data-feedback="A thermistor is used to sense temperature, so its resistance must change when it warms up.">It stays the same</button>
+        </div>
+        <div class="q-explain">As a thermistor gets <strong>warmer</strong>, its resistance goes <strong>down</strong>. When it is cold, its resistance is high.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-match">
+        <p class="q-prompt"><span class="q-num">5.</span>Match each job to the best input device.</p>
+        <div class="match">
+          <p class="match-hint">Drag each job onto a device, or tap a job and then a device.</p>
+          <div class="match-items">
+            <button type="button" class="match-item is-text" data-key="ldr" data-label="LDR">A street light that comes on when it gets dark</button>
+            <button type="button" class="match-item is-text" data-key="thermistor" data-label="Thermistor">Heating that senses when a room is cold</button>
+            <button type="button" class="match-item is-text" data-key="variable" data-label="Variable resistor">A volume knob on a speaker</button>
+            <button type="button" class="match-item is-text" data-key="switch" data-label="Switch">A doorbell button</button>
+            <button type="button" class="match-item is-text" data-key="mic" data-label="Microphone">A voice recorder</button>
+          </div>
+          <div class="match-targets">
+            <button type="button" class="match-target" data-key="switch">Switch</button>
+            <button type="button" class="match-target" data-key="mic">Microphone</button>
+            <button type="button" class="match-target" data-key="ldr">LDR</button>
+            <button type="button" class="match-target" data-key="variable">Variable resistor</button>
+            <button type="button" class="match-target" data-key="thermistor">Thermistor</button>
+          </div>
+        </div>
+        <div class="q-explain">Choose the device that senses the right thing: <strong>light</strong> (LDR), <strong>temperature</strong> (thermistor), <strong>sound</strong> (microphone), a <strong>press</strong> (switch), or a setting you <strong>turn or slide</strong> (variable resistor).</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">6.</span>Tap all the devices whose resistance changes by itself when the conditions around them change. There are 2.</p>
+        <div class="options">
+          <button type="button" class="option" data-feedback="A fixed resistor's resistance stays the same whatever is happening around it.">Fixed resistor</button>
+          <button type="button" class="option" data-feedback="Its resistance does change, but only when someone moves the slider or turns the knob. It doesn't react to its surroundings.">Variable resistor</button>
+          <button type="button" class="option" data-feedback="A lamp is an output device: it gives out light rather than sensing anything.">Lamp</button>
+          <button type="button" class="option" data-feedback="A switch is either open or closed, and a person changes it.">Switch</button>
+          <button type="button" class="option" data-correct>Thermistor</button>
+          <button type="button" class="option" data-correct>LDR</button>
+        </div>
+        <div class="q-explain">An <strong>LDR</strong> reacts to light and a <strong>thermistor</strong> reacts to temperature. That is why they make good sensors.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">7.</span>The resistance of the variable resistor in this circuit is turned up. What happens to the lamp?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 320 180" role="img" aria-label="A cell, a variable resistor and a lamp in one loop">
+            <path class="wire" d="M130 150H30V30H70M130 30H190M250 30H290V150H190"/>
+            <use href="#sym-variable-resistor" x="70" y="10" width="60" height="40"/>
+            <use href="#sym-lamp" x="190" y="10" width="60" height="40"/>
+            <use href="#sym-cell" x="130" y="130" width="60" height="40"/>
+          </svg>
+        </figure>
+        <div class="options is-row">
+          <button type="button" class="option" data-feedback="More resistance makes it harder for current to flow round the loop. What does that do to the lamp?">It gets brighter</button>
+          <button type="button" class="option" data-correct>It gets dimmer</button>
+          <button type="button" class="option" data-feedback="The variable resistor is in the same loop as the lamp, so changing it changes the current through the lamp too.">It stays the same</button>
+        </div>
+        <div class="q-explain">More resistance means <strong>less current</strong> round the loop, so the lamp gets <strong>dimmer</strong>. This is how a dimmer switch works.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq">
+        <p class="q-prompt"><span class="q-num">8.</span>A pupil covers the LDR in this circuit with their hand. What happens to the ammeter reading?</p>
+        <figure class="figure">
+          <svg class="circuit" viewBox="0 0 320 180" role="img" aria-label="A cell, an LDR and an ammeter in one loop">
+            <path class="wire" d="M130 150H30V30H70M130 30H190M250 30H290V150H190"/>
+            <use href="#sym-ldr" x="70" y="10" width="60" height="40"/>
+            <use href="#sym-ammeter" x="190" y="10" width="60" height="40"/>
+            <use href="#sym-cell" x="130" y="130" width="60" height="40"/>
+          </svg>
+        </figure>
+        <div class="options">
+          <button type="button" class="option" data-feedback="Covering the LDR makes it dark. Think about what happens to an LDR's resistance in the dark, then what that does to the current.">It goes up</button>
+          <button type="button" class="option" data-correct>It goes down</button>
+          <button type="button" class="option" data-feedback="The LDR is in the same loop as the ammeter, so if the LDR changes, the current everywhere in the loop changes.">It stays the same</button>
+          <button type="button" class="option" data-feedback="The LDR's resistance changes in the dark, but it doesn't become a gap: there is still a complete loop.">It drops to zero</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>Covering the LDR makes it dark. Is it easier or harder for current to get through an LDR in the dark?</p></details>
+        <div class="q-explain">In the dark the LDR's resistance goes <strong>up</strong>, so <strong>less current</strong> flows and the ammeter reading goes down.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="q q-mcq q-challenge">
+        <p class="q-prompt"><span class="q-tag">Challenge</span><span class="q-num">9.</span>A pupil connects a sensor to a 6.0 V supply and an ammeter. They change the temperature and record the current. The supply voltage stays the same. What do the results show?</p>
+        <table class="data-table">
+          <thead><tr><th scope="col">Temperature (°C)</th><th scope="col">Current (A)</th></tr></thead>
+          <tbody>
+            <tr><td>20</td><td>0.10</td></tr>
+            <tr><td>40</td><td>0.15</td></tr>
+            <tr><td>60</td><td>0.24</td></tr>
+            <tr><td>80</td><td>0.40</td></tr>
+          </tbody>
+        </table>
+        <div class="options">
+          <button type="button" class="option" data-feedback="A bigger current means the sensor is letting current through more easily. What does that say about its resistance?">Its resistance rises as it gets warmer</button>
+          <button type="button" class="option" data-correct>Its resistance falls as it gets warmer, so it is a thermistor</button>
+          <button type="button" class="option" data-feedback="An LDR reacts to light. What is being changed in this experiment?">It is an LDR, because its resistance changes</button>
+          <button type="button" class="option" data-feedback="The voltage stays the same, so if the current changes, something about the sensor must have changed too.">Its resistance doesn't change; only the current changes</button>
+        </div>
+        <details class="hint"><summary>Hint</summary><p>The voltage is kept the same. If more current flows, is the sensor making it harder or easier for current to get through?</p></details>
+        <div class="q-explain">With the same voltage, a <strong>bigger current</strong> means a <strong>smaller resistance</strong>. The resistance falls as the temperature rises, which is how a <strong>thermistor</strong> behaves.</div>
+        <div class="q-feedback" aria-live="polite"></div>
+      </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">Free for teachers to use. No logins, no tracking.</div>
+  </footer>
+</body>
+</html>
